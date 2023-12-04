@@ -1,5 +1,5 @@
 export interface CategoryEntity {
-  id_category: number;
+  id_category: string;
   user_mail?: string;
   category_name: string;
 };

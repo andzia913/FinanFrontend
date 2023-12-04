@@ -32,7 +32,7 @@ const FormBalaceRecord = ({categories, types, recordToEdit}: {categories: Catego
     type_name: types[0].type_name,
     date: new Date(),
     value: 0,
-    id_category: String(categories[0].id_category), 
+    id_category: categories[0].id_category, 
     category_name: categories[0].category_name,
     comment: '',
   };
@@ -42,7 +42,6 @@ const FormBalaceRecord = ({categories, types, recordToEdit}: {categories: Catego
   // const [recordToEdit, setRecordToEdit] = useState(null);
   useEffect(() => {
     if (recordToEdit) {
-      console.log('istnieje record do edycji- tablebalance', recordToEdit)
       setIsEditMode(true)
       setFormData({
         id_type: recordToEdit.id_type,
@@ -77,12 +76,15 @@ const FormBalaceRecord = ({categories, types, recordToEdit}: {categories: Catego
     setFormData(initialFormData);
   }};
 
+  const handleUpdate = () => {
+
+  };
+
   return (
     <Grid container justifyContent="center">
       <Grid item xs={10} sm={8} md={6}>
         <Paper elevation={3} style={{ padding: '20px' }}>
-          
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={isEditMode ? handleUpdate : handleSubmit}>
             <FormControl fullWidth margin="normal">
               <InputLabel id="type-label">Typ</InputLabel>
               <Select
@@ -155,12 +157,15 @@ const FormBalaceRecord = ({categories, types, recordToEdit}: {categories: Catego
                 required={true}
                 value={formData.id_category}
                 onChange={ (e: SelectChangeEvent<string>) => {
+                  const selectedCategoryId = e.target.value;
+                  const selectedCategory = categories.find((category) => category.id_category === selectedCategoryId);
                   setFormData({
                     ...formData,
                     id_category: e.target.value,
+                    category_name: selectedCategory?.category_name || ''
                 })}}
               >
-                {categories.map((category) => ( <MenuItem key={category.id_category} value={category.id_category}>
+                {categories.map((category) => (<MenuItem key={category.id_category} value={category.id_category}>
                 {category.category_name}
       </MenuItem>
                 ))}
@@ -184,7 +189,7 @@ const FormBalaceRecord = ({categories, types, recordToEdit}: {categories: Catego
               />
             </FormControl>
             <Button variant="contained" color="primary" type="submit">
-              Dodaj Rekord
+              {isEditMode? 'Aktualizuj rekord' : 'Dodaj nowy rekord'}
             </Button>
           </form>
         </Paper>

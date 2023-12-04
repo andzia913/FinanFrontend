@@ -2,7 +2,7 @@ import React from 'react';
 import TableColumn from 'types/tableColumn';
 import { BalanceEntity } from 'types/balance.entity';
 import { useTable, Column } from 'react-table';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -18,23 +18,6 @@ const TableBalance = ({ columns, data, handleEditClick, handleDeleteClick }: { c
         data,
     });
 
-    // const onEditClick = async (id: string) => {
-    //     // try{  ON MA PRZEKAZAĆ CAŁY OBIEKT A NIE TYLKO ID 
-    //     //     const response = await fetch(`http://localhost:5000/financialBalance/update/${id}`, {
-    //     //         method: 'UPDATE',
-    //     //         headers: {
-    //     //              'Content-Type': 'application/json'
-    //     //          },
-    //     //        })
-    //     //     if (response.ok) {
-    //     //     const responseData = response;
-    //     //     console.log('Dane zostały pomyślnie usunięte.', responseData);
-    //     //       } else {
-    //     //     console.error('Błąd podczas wysyłania danych na serwer. UPDATE');}
-    //     //    } catch (error) {
-    //     //     console.error('Błąd podczas wysyłania danych na serwer. UPDATE', error)
-    //     //     }
-    // };
       
     const onDeleteClick = async (id: string) => {
         try{
@@ -77,12 +60,16 @@ const TableBalance = ({ columns, data, handleEditClick, handleDeleteClick }: { c
                                     );
                                 })}
                                 <TableCell>
-                                    <IconButton aria-label="Edit"  onClick={() => handleEditClick(row.original.id)} >
+                                    <Tooltip title='Edytuj'>
+                                        <IconButton aria-label="Edit"  onClick={() => handleEditClick(row.original.id)} >
                                         <EditIcon />
                                     </IconButton>
-                                    <IconButton aria-label="Delete" onClick={() => onDeleteClick(row.original.id)} >
+                                    </Tooltip>
+                                    <Tooltip title='Usuń'>
+                                        <IconButton aria-label="Delete" onClick={() => onDeleteClick(row.original.id)} >
                                         <DeleteIcon />
                                     </IconButton>
+                                    </Tooltip>
                                 </TableCell>
                             </TableRow>
                         );

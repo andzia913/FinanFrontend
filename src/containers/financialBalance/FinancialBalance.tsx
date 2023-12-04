@@ -5,6 +5,7 @@ import FormBalanceRecord from '../../components/FormBalaceRecord/FormBalanceReco
 import { BalanceEntity } from 'types/balance.entity.ts';
 import { CategoryEntity } from 'types/category.entity.ts';
 import { TypeEntity } from 'types/type.entity.ts';
+import { Button, CircularProgress, Dialog } from '@mui/material';
 
 
 const FinancialBalance = () => {
@@ -12,6 +13,10 @@ const FinancialBalance = () => {
   const [categoriesData, setCategoriesData]= useState<CategoryEntity[]>()
   const [typesData, setTypesData]= useState<TypeEntity[]>()
   const [recordToEdit, setRecordToEdit] = useState<BalanceEntity | null>(null);
+  const [isVisilbeFormAdd, setIsVisibleFormAdd] = useState(false);
+  const [isVisilbeFormEdit, setIsVisibleFormEdit] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
+
 
 
   const balanceDataRef = useRef<BalanceEntity[] | null>(null);
@@ -25,7 +30,6 @@ const FinancialBalance = () => {
     setBalanceData(data);
     console.log( 'balance data', data)
   };
-  const handleDeleteClick = async() => await fetchBalanceData();
 
   const handleEditClick = (id: string) =>{
     const fetchRecordData = async () => {
@@ -33,11 +37,19 @@ const FinancialBalance = () => {
       const data: BalanceEntity = await res.json();
       const dataCorectedDate = {...data, date: new Date(data.date)}
       setRecordToEdit(dataCorectedDate);
+      setIsVisibleFormEdit(true)
       console.log( 'dane recordu do edycji', dataCorectedDate)
     };
     fetchRecordData()
   }
-
+  useEffect(()=>{
+    if(balanceData && categoriesData && typesData){
+      setLoadingData(false);}
+      else{
+        setLoadingData(true)
+      }
+      console.log('czy to nie pętla?')
+  },[balanceData,categoriesData, typesData])
   useEffect(() => {
     fetchBalanceData();
   }, [balanceDataRef]);
@@ -69,15 +81,23 @@ const FinancialBalance = () => {
   
   return (
     <>
-    {categoriesData && typesData && (
-    <FormBalanceRecord categories={categoriesData} types={typesData} recordToEdit={recordToEdit}/>
-    )}
-
-
-      {balanceData && (
-      <TableBalance columns={tableColumns} data={balanceData} handleEditClick={handleEditClick} handleDeleteClick={fetchBalanceData}/>
-    )}
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={() => setIsVisibleFormAdd(isVisilbeFormAdd ? false : true)}
+    >
+      Dodaj nowy rekord
+    </Button>
+  
+    {loadingData ? <CircularProgress/> : <>
+    {isVisilbeFormAdd ? <FormBalanceRecord categories={categoriesData} types={typesData} recordToEdit={recordToEdit}/>: ''}
+    <Dialog open={isVisilbeFormEdit}>
+      <FormBalanceRecord categories={categoriesData} types={typesData} recordToEdit={recordToEdit}/>
+    </Dialog>
+    <TableBalance columns={tableColumns} data={balanceData} handleEditClick={handleEditClick} handleDeleteClick={fetchBalanceData}/></>
+  }
     </>
+    
   );
 };
 
