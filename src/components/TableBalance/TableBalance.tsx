@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-const TableBalance = ({ columns, data, handleEditClick }: { columns: TableColumn[]; data: BalanceEntity[], handleEditClick: Function}) => {
+const TableBalance = ({ columns, data, handleEditClick, handleDeleteClick }: { columns: TableColumn[]; data: BalanceEntity[], handleEditClick: Function, handleDeleteClick: Function}) => {
     const {
         getTableProps,
         getTableBodyProps,
@@ -47,6 +47,7 @@ const TableBalance = ({ columns, data, handleEditClick }: { columns: TableColumn
        if (response.ok) {
      const responseData = response;
      console.log('Dane zostały pomyślnie usunięte.', responseData);
+     handleDeleteClick();
        } else {
      console.error('Błąd podczas wysyłania danych na serwer. DELETE');}
     } catch (error) {

@@ -18,6 +18,15 @@ const FinancialBalance = () => {
   const categoriesDataRef = useRef<CategoryEntity[] | null>(null);
   const typesDataRef = useRef<TypeEntity[] | null>(null);
 
+  const fetchBalanceData = async () => {
+    const res = await fetch('http://localhost:5000/financialBalance');
+    const data: BalanceEntity[] = await res.json();
+    balanceDataRef.current = data;
+    setBalanceData(data);
+    console.log( 'balance data', data)
+  };
+  const handleDeleteClick = async() => await fetchBalanceData();
+
   const handleEditClick = (id: string) =>{
     const fetchRecordData = async () => {
       const res = await fetch(`http://localhost:5000/financialBalance/get-one/${id}`);
@@ -30,14 +39,6 @@ const FinancialBalance = () => {
   }
 
   useEffect(() => {
-    const fetchBalanceData = async () => {
-      const res = await fetch('http://localhost:5000/financialBalance');
-      const data: BalanceEntity[] = await res.json();
-      balanceDataRef.current = data;
-      setBalanceData(data);
-      console.log( 'balance data', data)
-    };
-
     fetchBalanceData();
   }, [balanceDataRef]);
 
@@ -74,7 +75,7 @@ const FinancialBalance = () => {
 
 
       {balanceData && (
-      <TableBalance columns={tableColumns} data={balanceData} handleEditClick={handleEditClick} />
+      <TableBalance columns={tableColumns} data={balanceData} handleEditClick={handleEditClick} handleDeleteClick={fetchBalanceData}/>
     )}
     </>
   );
