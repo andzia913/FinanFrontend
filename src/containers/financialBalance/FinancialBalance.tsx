@@ -6,6 +6,7 @@ import { BalanceEntity } from 'types/balance.entity.ts';
 import { CategoryEntity } from 'types/category.entity.ts';
 import { TypeEntity } from 'types/type.entity.ts';
 import { Button, CircularProgress, Dialog } from '@mui/material';
+import NavBar from '../../components/NavBar/Navbar.tsx';
 
 
 const FinancialBalance = () => {
@@ -118,6 +119,7 @@ const FinancialBalance = () => {
   
   return (
     <>
+    <NavBar/>
     <Button
       variant="contained"
       color="primary"
