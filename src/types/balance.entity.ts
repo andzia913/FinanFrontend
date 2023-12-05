@@ -10,3 +10,12 @@ export interface BalanceEntity{
     comment: string;
     planned?: number;
 }
+
+export interface FormData extends BalanceEntity {
+    id?: string;
+    id_type: string;
+    date: Date;
+    value: number;
+    id_category: string;
+    comment: string; 
+  };

@@ -14,20 +14,14 @@ import { CategoryEntity } from 'types/category.entity';
 import { TypeEntity } from 'types/type.entity';
 import formatDateForInput from '../../utils/formatDateForInput';
 import { BalanceEntity } from 'types/balance.entity';
-
-interface FormData extends BalanceEntity {
-  id_type: string;
-  date: Date;
-  value: number;
-  id_category: string;
-  comment: string; 
-};
+import { FormData } from 'types/balance.entity';
 
 
-const FormBalaceRecord = ({categories, types, recordToEdit}: {categories: CategoryEntity[], types: TypeEntity[], recordToEdit: BalanceEntity | null} ) => {
 
+const FormBalaceRecord = ({categories, types, recordToEdit, handleSubmit}: {categories: CategoryEntity[], types: TypeEntity[], recordToEdit: BalanceEntity | null, handleSubmit: Function} ) => {
 
   const initialFormData: FormData = {
+    id: '',
     id_type: types[0].id_type,
     type_name: types[0].type_name,
     date: new Date(),
@@ -44,6 +38,7 @@ const FormBalaceRecord = ({categories, types, recordToEdit}: {categories: Catego
     if (recordToEdit) {
       setIsEditMode(true)
       setFormData({
+        id: recordToEdit.id,
         id_type: recordToEdit.id_type,
         type_name: recordToEdit.type_name,
         date: recordToEdit.date,
@@ -51,40 +46,23 @@ const FormBalaceRecord = ({categories, types, recordToEdit}: {categories: Catego
         id_category: recordToEdit.id_category,
         category_name: recordToEdit.category_name,
         comment: recordToEdit.comment,
-      });
-    }
+      } );
+    }else{
+        setIsEditMode(false);
+      }
   }, [recordToEdit]);
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleClickSubmit = (event: React.FormEvent, formData: FormData) => {
     event.preventDefault();
-    try{
-      const response = await fetch('http://localhost:5000/financialBalance/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-       if (response.ok) {
-      const responseData = await response.json();
-      console.log('Dane zostały pomyślnie wysłane na serwer.', responseData);
-      setFormData(initialFormData);
-    } else {
-      console.error('Błąd podczas wysyłania danych na serwer.');}
-     } catch (error) {
-      console.error('Błąd podczas wysyłania danych na serwer.', error)
     setFormData(initialFormData);
-  }};
-
-  const handleUpdate = () => {
-
-  };
+    handleSubmit(formData, isEditMode);
+  }
 
   return (
     <Grid container justifyContent="center">
       <Grid item xs={10} sm={8} md={6}>
         <Paper elevation={3} style={{ padding: '20px' }}>
-          <form onSubmit={isEditMode ? handleUpdate : handleSubmit}>
+          <form onSubmit={(e) =>{ handleClickSubmit(e, formData)}}>
             <FormControl fullWidth margin="normal">
               <InputLabel id="type-label">Typ</InputLabel>
               <Select

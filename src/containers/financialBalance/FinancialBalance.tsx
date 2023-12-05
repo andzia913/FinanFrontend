@@ -16,9 +16,6 @@ const FinancialBalance = () => {
   const [isVisilbeFormAdd, setIsVisibleFormAdd] = useState(false);
   const [isVisilbeFormEdit, setIsVisibleFormEdit] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
-
-
-
   const balanceDataRef = useRef<BalanceEntity[] | null>(null);
   const categoriesDataRef = useRef<CategoryEntity[] | null>(null);
   const typesDataRef = useRef<TypeEntity[] | null>(null);
@@ -28,7 +25,6 @@ const FinancialBalance = () => {
     const data: BalanceEntity[] = await res.json();
     balanceDataRef.current = data;
     setBalanceData(data);
-    console.log( 'balance data', data)
   };
 
   const handleEditClick = (id: string) =>{
@@ -42,13 +38,54 @@ const FinancialBalance = () => {
     };
     fetchRecordData()
   }
+  const handleSubmit = async (formData: FormData, isEditMode: boolean) => {
+    if(isEditMode){
+      try{
+        console.log('probujemy aktualizowac', formData)
+        const response = await fetch(`http://localhost:5000/financialBalance/update/${formData.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        setRecordToEdit(null)
+        fetchBalanceData();
+         if (response.ok) {
+        const responseData = await response.json();
+        console.log('Dane zostały pomyślnie zaktualizoane.', responseData);
+      } else {
+        console.error('Błąd podczas wysyłania danych na serwer.');}
+       } catch (error) {
+        console.error('Błąd podczas wysyłania danych na serwer.', error)
+    }
+    setIsVisibleFormEdit(false)
+  }else{
+      try{
+      console.log(formData, 'to probujemy wysłać')
+      const response = await fetch('http://localhost:5000/financialBalance/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      fetchBalanceData();
+       if (response.ok) {
+      const responseData = await response.json();
+      console.log('Dane zostały pomyślnie wysłane na serwer.', responseData);
+    } else {
+      console.error('Błąd podczas wysyłania danych na serwer.');}
+     } catch (error) {
+      console.error('Błąd podczas wysyłania danych na serwer.', error)
+  }}};
+
   useEffect(()=>{
     if(balanceData && categoriesData && typesData){
       setLoadingData(false);}
       else{
         setLoadingData(true)
       }
-      console.log('czy to nie pętla?')
   },[balanceData,categoriesData, typesData])
   useEffect(() => {
     fetchBalanceData();
@@ -90,9 +127,9 @@ const FinancialBalance = () => {
     </Button>
   
     {loadingData ? <CircularProgress/> : <>
-    {isVisilbeFormAdd ? <FormBalanceRecord categories={categoriesData} types={typesData} recordToEdit={recordToEdit}/>: ''}
-    <Dialog open={isVisilbeFormEdit}>
-      <FormBalanceRecord categories={categoriesData} types={typesData} recordToEdit={recordToEdit}/>
+    {isVisilbeFormAdd ? <FormBalanceRecord categories={categoriesData} types={typesData} recordToEdit={recordToEdit} handleSubmit={handleSubmit}/>: ''}
+    <Dialog open={isVisilbeFormEdit} maxWidth={undefined}>
+      <FormBalanceRecord categories={categoriesData} types={typesData} recordToEdit={recordToEdit} handleSubmit={handleSubmit}/>
     </Dialog>
     <TableBalance columns={tableColumns} data={balanceData} handleEditClick={handleEditClick} handleDeleteClick={fetchBalanceData}/></>
   }
