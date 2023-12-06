@@ -1,22 +1,47 @@
 import React from 'react';
-import {AppBar, Container, Toolbar, Tooltip, Typography, Box, IconButton, Avatar, Button, Menu, MenuItem } from '@mui/material';
-import AdbIcon from '@mui/icons-material/Adb';
+import {AppBar, Container, Toolbar, Tooltip, Typography, Box, IconButton, Avatar, Button, Menu, MenuItem, Link } from '@mui/material';
+import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = [
+  {pageName: 'Start', pageLink: '/'},
+  {pageName: 'Cele', pageLink: '/cash-goals'},
+  {pageName: 'Przepływy', pageLink: '/cash-flow'},
+  {pageName: 'Bilans', pageLink: '/financial-balance'},
+  {pageName: 'Struktura kosztów', pageLink: '/cost-structure'}
+]
+const settings = ['Profile', 'Logout'];
 
 const NavBar = () => {
+  
+    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  
+    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorElNav(event.currentTarget);
+    };
+    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorElUser(event.currentTarget);
+    };
+  
+    const handleCloseNavMenu = () => {
+      setAnchorElNav(null);
+    };
+  
+    const handleCloseUserMenu = () => {
+      setAnchorElUser(null);
+    };
+
     return(
         <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <PaymentsOutlinedIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -27,7 +52,7 @@ const NavBar = () => {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            FINAN
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -36,14 +61,14 @@ const NavBar = () => {
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              // onClick={handleOpenNavMenu}
+              onClick={handleOpenNavMenu}
               color="inherit"
             >
               <MenuIcon />
             </IconButton>
             <Menu
               id="menu-appbar"
-              // anchorEl={anchorElNav}
+              anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left',
@@ -53,22 +78,24 @@ const NavBar = () => {
                 vertical: 'top',
                 horizontal: 'left',
               }}
-              // open={Boolean(anchorElNav)}
-              // onClose={handleCloseNavMenu}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
               sx={{
                 display: { xs: 'block', md: 'none' },
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} 
-                // onClick={handleCloseNavMenu}
+                <MenuItem
+                component={Link}
+                href={page.pageLink}
+                key={page.pageName} 
                 >
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign="center">{page.pageName}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <PaymentsOutlinedIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -85,16 +112,17 @@ const NavBar = () => {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            FINAN
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                key={page}
-                // onClick={handleCloseNavMenu}
+                key={page.pageName}
+                href={page.pageLink}
+                onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                {page.pageName}
               </Button>
             ))}
           </Box>
@@ -102,7 +130,7 @@ const NavBar = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton 
-              // onClick={handleOpenUserMenu} 
+              onClick={handleOpenUserMenu} 
               sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
@@ -110,7 +138,7 @@ const NavBar = () => {
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
-              // anchorEl={anchorElUser}
+              anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'right',
@@ -120,12 +148,12 @@ const NavBar = () => {
                 vertical: 'top',
                 horizontal: 'right',
               }}
-              // open={Boolean(anchorElUser)}
-              // onClose={handleCloseUserMenu}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
                 <MenuItem key={setting}
-                //  onClick={handleCloseUserMenu}
+                 onClick={handleCloseUserMenu}
                  >
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
