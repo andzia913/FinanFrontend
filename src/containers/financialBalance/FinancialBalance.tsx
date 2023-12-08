@@ -5,7 +5,7 @@ import FormBalanceRecord from '../../components/FormBalaceRecord/FormBalanceReco
 import { BalanceEntity } from 'types/balance.entity.ts';
 import { CategoryEntity } from 'types/category.entity.ts';
 import { TypeEntity } from 'types/type.entity.ts';
-import { Button, CircularProgress, Container, Dialog } from '@mui/material';
+import { Button, CircularProgress, Container, Dialog, Skeleton } from '@mui/material';
 import NavBar from '../../components/NavBar/Navbar.tsx';
 
 
@@ -121,6 +121,8 @@ const FinancialBalance = () => {
     <>
     <Container disableGutters={true}>
     <NavBar/>
+    <Skeleton variant="circular" width={40} height={40} > abcd</Skeleton>
+
     <Button
       variant="contained"
       color="primary"
