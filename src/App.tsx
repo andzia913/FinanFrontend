@@ -1,8 +1,9 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
-import { CashFlow, CashGoals, CostStructure, FinancialBalance, Main } from "./containers/index.tsx";
+import { Login, Register, CashFlow, CashGoals, CostStructure, FinancialBalance, Main } from "./containers/index.tsx";
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+
 
 const darkTheme = createTheme({
   palette: {
@@ -25,6 +26,8 @@ const App = () => {
         <CssBaseline/>
             <Routes>
               <Route  path="/" element={<Main />}/>
+              <Route  path="/login" element={<Login />}/>
+              <Route  path="/register" element={<Register />}/>
               <Route  path="/cash-goals" element={<CashGoals />}/>
               <Route  path="/cash-flow" element={<CashFlow />}/>
               <Route  path="/cost-structure" element={<CostStructure />}/>

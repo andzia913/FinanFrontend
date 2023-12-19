@@ -1,15 +1,15 @@
 import React from 'react';
 import { Container } from '@mui/material';
 import NavBar from '../../components/NavBar/Navbar';
+import LoginForm from '../../components/LoginForm/LoginForm';
 
-
-const Main = () => {
+const Login = () => {
   return (
     <Container disableGutters={true}>
       <NavBar/>
-
+      <LoginForm/>
     </Container>
   );
 };
 
-export default Main;
+export default Login;

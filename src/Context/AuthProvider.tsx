@@ -1,31 +1,30 @@
-import { createContext, useState, FC, ReactNode } from "react";
+import { createContext, useState, FC, ReactNode, useEffect } from "react";
 
 type AuthContextData = {
-    auth: {
-        email: string;
-        token: string;
-    }
-    setAuth?: (data: { email: string; token: string }) => void;
-}
+  auth: {
+    email: string;
+  };
+  setAuth?: (data: { email: string }) => void;
+};
 
-const AuthContext = createContext<AuthContextData>({ auth: { email: '', token: '' } });
+const AuthContext = createContext<AuthContextData>({
+  auth: { email: "" },
+});
 
 type AuthProviderProps = {
-    children: ReactNode;
+  children: ReactNode;
 };
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
-    const [auth, setAuth] = useState({ email: '', token: '' });
-    const contextData: AuthContextData = {
-        auth,
-        setAuth: (data) => setAuth(data),
-    };
-
-    return (
-        <AuthContext.Provider value={contextData}>
-            {children}
-        </AuthContext.Provider>
-    )
-}
+  const [auth, setAuth] = useState({ email: "" });
+  const contextData: AuthContextData = {
+    auth,
+    setAuth: (data) => setAuth(data),
+  };
+  useEffect(() => console.log("autoryzacja w kontekscie", auth), [auth]);
+  return (
+    <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>
+  );
+};
 
 export default AuthContext;
