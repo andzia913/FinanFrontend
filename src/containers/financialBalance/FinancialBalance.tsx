@@ -34,7 +34,8 @@ const FinancialBalance = () => {
       await res.json();
     console.log(financialBalance, balanceCostSum, balanceIncomeSum);
     // const data: BalanceEntity[] = (await res.json()).financialBalance;
-    setBalanceTotal(balanceIncomeSum.totalIncome - balanceCostSum.totalCost);
+    const total = balanceIncomeSum.totalIncome - balanceCostSum.totalCost;
+    setBalanceTotal(Number(total.toFixed(2)));
     balanceDataRef.current = financialBalance;
     setBalanceData(financialBalance);
   };

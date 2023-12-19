@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Container,
   List,
@@ -5,28 +6,39 @@ import {
   ListItemText,
   ListItemButton,
   Button,
+  Box,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import NavBar from "../../components/NavBar/Navbar";
 import { PieChart } from "@mui/x-charts/PieChart";
-
-import React, { useState } from "react";
 import serverAddress from "../../utils/server";
+import { CategoriesTotal } from "types/category.entity";
 
 const CostStructure = () => {
-  // [categories, setCategories] = useState();
+  const [categoriesData, setCategoriesData] = useState<CategoriesTotal[]>();
 
   // const valueOfCategory = {};
 
   const fetchCategoriesData = async () => {
-    const res = await fetch(serverAddress + `/cost-structure`);
-    // const categoriesData= await res.json();
-    // const dataCorectedDate = { ...data, date: new Date(data.date) };
-    // setRecordToEdit(dataCorectedDate);
-    // setIsVisibleFormEdit(true);
-    // console.log("dane recordu do edycji", dataCorectedDate);
+    try {
+      const res = await fetch(serverAddress + `/cost-structure`);
+      const categoriesData = await res.json();
+      setCategoriesData(categoriesData);
+      console.log("dane categories", categoriesData);
+    } catch (error) {
+      console.error("Błąd podczas pobierania danych kategorii:", error);
+    }
   };
-  fetchCategoriesData();
+
+  useEffect(() => {
+    fetchCategoriesData();
+  }, []);
+  const arrForChart =
+    categoriesData?.map((category, index) => ({
+      id: index,
+      value: category.total,
+      label: category.category,
+    })) || undefined;
 
   // eslint-disable-next-line no-console
   console.log("x");
@@ -34,37 +46,36 @@ const CostStructure = () => {
     <Container disableGutters={true}>
       <NavBar />
       <List component="nav" aria-label="mailbox folders">
-        <ListItemButton>
-          <ListItemText primary="Inbox" />
-        </ListItemButton>
-        <Divider />
-        <ListItemButton divider>
-          <ListItemText primary="Drafts" />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemText primary="Trash" />
-        </ListItemButton>
-        <Divider light />
-        <ListItemButton>
-          <ListItemText primary="Spam" />
-        </ListItemButton>
+        {categoriesData &&
+          categoriesData.map((category, index) => (
+            <>
+              <ListItemButton key={index + "listItem"}>
+                <ListItemText
+                  key={index + "textInItem"}
+                  primary={category.category}
+                />
+                <Box key={index + "total"}>{category.total}</Box>
+              </ListItemButton>
+              <Divider key={index + "divider"} />
+            </>
+          ))}
       </List>
       <Button variant="outlined" color="success">
         <AddIcon /> Dodaj nową kategorię
       </Button>
-
-      <PieChart
-        series={[
-          {
-            data: [
-              { id: 0, value: 10, label: "series A" },
-              { id: 1, value: 15, label: "series B" },
-            ],
-          },
-        ]}
-        width={400}
-        height={200}
-      />
+      {arrForChart && (
+        <PieChart
+          series={[
+            {
+              data: arrForChart,
+              highlightScope: { faded: "global", highlighted: "item" },
+              faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
+            },
+          ]}
+          width={600}
+          height={300}
+        />
+      )}
     </Container>
   );
 };
