@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   FormControl,
   InputLabel,
@@ -9,26 +9,33 @@ import {
   Grid,
   Paper,
   SelectChangeEvent,
-} from '@mui/material';
-import { CategoryEntity } from 'types/category.entity';
-import { TypeEntity } from 'types/type.entity';
-import formatDateForInput from '../../utils/formatDateForInput';
-import { BalanceEntity } from 'types/balance.entity';
-import { FormData } from 'types/balance.entity';
+} from "@mui/material";
+import { CategoryEntity } from "types/category.entity";
+import { TypeEntity } from "types/type.entity";
+import formatDateForInput from "../../utils/formatDateForInput";
+import { BalanceEntity } from "types/balance.entity";
+import { FormData } from "types/balance.entity";
 
-
-
-const FormBalaceRecord = ({categories, types, recordToEdit, handleSubmit}: {categories: CategoryEntity[], types: TypeEntity[], recordToEdit: BalanceEntity | null, handleSubmit: Function} ) => {
-
+const FormBalaceRecord = ({
+  categories,
+  types,
+  recordToEdit,
+  handleSubmit,
+}: {
+  categories: CategoryEntity[];
+  types: TypeEntity[];
+  recordToEdit: BalanceEntity | null;
+  handleSubmit: Function;
+}) => {
   const initialFormData: FormData = {
-    id: '',
+    id: "",
     id_type: types[0].id_type,
     type_name: types[0].type_name,
     date: new Date(),
     value: 0,
-    id_category: categories[0].id_category, 
+    id_category: categories[0].id_category,
     category_name: categories[0].category_name,
-    comment: '',
+    comment: "",
   };
 
   const [formData, setFormData] = useState<FormData>(initialFormData);
@@ -36,7 +43,7 @@ const FormBalaceRecord = ({categories, types, recordToEdit, handleSubmit}: {cate
   // const [recordToEdit, setRecordToEdit] = useState(null);
   useEffect(() => {
     if (recordToEdit) {
-      setIsEditMode(true)
+      setIsEditMode(true);
       setFormData({
         id: recordToEdit.id,
         id_type: recordToEdit.id_type,
@@ -46,23 +53,28 @@ const FormBalaceRecord = ({categories, types, recordToEdit, handleSubmit}: {cate
         id_category: recordToEdit.id_category,
         category_name: recordToEdit.category_name,
         comment: recordToEdit.comment,
-      } );
-    }else{
-        setIsEditMode(false);
-      }
+      });
+    } else {
+      setIsEditMode(false);
+    }
   }, [recordToEdit]);
 
   const handleClickSubmit = (event: React.FormEvent, formData: FormData) => {
     event.preventDefault();
     setFormData(initialFormData);
     handleSubmit(formData, isEditMode);
-  }
+  };
+  console.log("Kategorie:", categories, "typy: ", types);
 
   return (
     <Grid container justifyContent="center">
       <Grid item xs={10} sm={8} md={6}>
-        <Paper elevation={3} style={{ padding: '20px' }}>
-          <form onSubmit={(e) =>{ handleClickSubmit(e, formData)}}>
+        <Paper elevation={3} style={{ padding: "20px" }}>
+          <form
+            onSubmit={(e) => {
+              handleClickSubmit(e, formData);
+            }}
+          >
             <FormControl fullWidth margin="normal">
               <InputLabel id="type-label">Typ</InputLabel>
               <Select
@@ -72,19 +84,24 @@ const FormBalaceRecord = ({categories, types, recordToEdit, handleSubmit}: {cate
                 required={true}
                 value={formData.id_type}
                 onChange={(e: SelectChangeEvent<string>) => {
+                  console.log("type wywołany");
                   const selectedTypeId = e.target.value;
-                  const selectedType = types.find((type) => type.id_type === selectedTypeId);
-              
+                  const selectedType = types.find(
+                    (type) => type.id_type === selectedTypeId
+                  );
+
                   setFormData({
                     ...formData,
                     id_type: selectedTypeId,
-                    type_name: selectedType?.type_name || ''
+                    type_name: selectedType?.type_name || "",
                   });
                 }}
               >
-                {types.map((type) => <MenuItem key={type.id_type} value = {type.id_type}>
-                  {type.type_name}
-                </MenuItem>) }
+                {types.map((type) => (
+                  <MenuItem key={type.id_type} value={type.id_type}>
+                    {type.type_name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <FormControl fullWidth margin="normal">
@@ -99,7 +116,8 @@ const FormBalaceRecord = ({categories, types, recordToEdit, handleSubmit}: {cate
                   setFormData({
                     ...formData,
                     date: new Date(e.target.value),
-                  });}}
+                  });
+                }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -116,12 +134,12 @@ const FormBalaceRecord = ({categories, types, recordToEdit, handleSubmit}: {cate
                 onChange={(e) => {
                   setFormData({
                     ...formData,
-                    value: Number(e.target.value)
-                  })
+                    value: Number(e.target.value),
+                  });
                 }}
                 InputProps={{
                   inputProps: {
-                    step: '0.01',
+                    step: "0.01",
                   },
                 }}
               />
@@ -134,18 +152,26 @@ const FormBalaceRecord = ({categories, types, recordToEdit, handleSubmit}: {cate
                 name="category"
                 required={true}
                 value={formData.id_category}
-                onChange={ (e: SelectChangeEvent<string>) => {
+                onChange={(e: SelectChangeEvent<string>) => {
+                  console.log("wywołany");
                   const selectedCategoryId = e.target.value;
-                  const selectedCategory = categories.find((category) => category.id_category === selectedCategoryId);
+                  const selectedCategory = categories.find(
+                    (category) => category.id_category === selectedCategoryId
+                  );
                   setFormData({
                     ...formData,
                     id_category: e.target.value,
-                    category_name: selectedCategory?.category_name || ''
-                })}}
+                    category_name: selectedCategory?.category_name || "",
+                  });
+                }}
               >
-                {categories.map((category) => (<MenuItem key={category.id_category} value={category.id_category}>
-                {category.category_name}
-      </MenuItem>
+                {categories.map((category) => (
+                  <MenuItem
+                    key={category.id_category}
+                    value={category.id_category}
+                  >
+                    {category.category_name}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -158,22 +184,22 @@ const FormBalaceRecord = ({categories, types, recordToEdit, handleSubmit}: {cate
                 multiline
                 rows={4}
                 value={formData.comment}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>)=>{
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                   setFormData({
                     ...formData,
-                    comment: e.target.value
-                })
+                    comment: e.target.value,
+                  });
                 }}
               />
             </FormControl>
             <Button variant="contained" color="primary" type="submit">
-              {isEditMode? 'Aktualizuj rekord' : 'Dodaj nowy rekord'}
+              {isEditMode ? "Aktualizuj rekord" : "Dodaj nowy rekord"}
             </Button>
           </form>
         </Paper>
       </Grid>
     </Grid>
   );
-}
+};
 
 export default FormBalaceRecord;

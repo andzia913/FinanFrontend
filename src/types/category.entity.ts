@@ -5,6 +5,7 @@ export interface CategoryEntity {
 }
 
 export interface CategoriesTotal {
+  id: string;
   category: string;
   total: number;
 }

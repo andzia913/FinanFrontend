@@ -32,8 +32,6 @@ const FinancialBalance = () => {
     const res = await fetch(serverAddress + "/financialBalance");
     const { financialBalance, balanceCostSum, balanceIncomeSum } =
       await res.json();
-    console.log(financialBalance, balanceCostSum, balanceIncomeSum);
-    // const data: BalanceEntity[] = (await res.json()).financialBalance;
     const total = balanceIncomeSum.totalIncome - balanceCostSum.totalCost;
     setBalanceTotal(Number(total.toFixed(2)));
     balanceDataRef.current = financialBalance;
@@ -49,14 +47,14 @@ const FinancialBalance = () => {
       const dataCorectedDate = { ...data, date: new Date(data.date) };
       setRecordToEdit(dataCorectedDate);
       setIsVisibleFormEdit(true);
-      console.log("dane recordu do edycji", dataCorectedDate);
+      // console.log("dane recordu do edycji", dataCorectedDate);
     };
     fetchRecordData();
   };
   const handleSubmit = async (formData: FormData, isEditMode: boolean) => {
     if (isEditMode) {
       try {
-        console.log("probujemy aktualizowac", formData);
+        // console.log("probujemy aktualizowac", formData);
         const response = await fetch(
           serverAddress + `/financialBalance/update/${formData.id}`,
           {
@@ -81,7 +79,7 @@ const FinancialBalance = () => {
       setIsVisibleFormEdit(false);
     } else {
       try {
-        console.log(formData, "to probujemy wysłać");
+        // console.log(formData, "to probujemy wysłać");
         const response = await fetch(serverAddress + "/financialBalance/add", {
           method: "POST",
           headers: {
