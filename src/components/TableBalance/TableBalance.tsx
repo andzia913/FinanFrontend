@@ -1,4 +1,3 @@
-import React from "react";
 import TableColumn from "types/tableColumn";
 import { BalanceEntity } from "types/balance.entity";
 import { useTable, Column } from "react-table";

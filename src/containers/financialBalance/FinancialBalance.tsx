@@ -153,6 +153,7 @@ const FinancialBalance = () => {
           <span
             style={{
               color: `${balanceTotal > 0 ? "lightgreen" : "indianred"}`,
+              marginLeft: "15px",
             }}
           >
             {balanceTotal} zł
