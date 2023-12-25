@@ -46,7 +46,6 @@ const TableBalance = ({
       );
       if (response.ok) {
         const responseData = response;
-        console.log("Dane zostały pomyślnie usunięte.", responseData);
         handleDeleteClick();
       } else {
         console.error("Błąd podczas wysyłania danych na serwer. DELETE");

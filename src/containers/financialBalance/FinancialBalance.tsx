@@ -77,7 +77,6 @@ const FinancialBalance = () => {
       setIsVisibleFormEdit(false);
     } else {
       try {
-        // console.log(formData, "to probujemy wysłać");
         const response = await fetch(serverAddress + "/financialBalance/add", {
           method: "POST",
           headers: {
@@ -129,7 +128,6 @@ const FinancialBalance = () => {
       const types: TypeEntity[] = await res.json();
       // typesDataRef.current = types;
       setTypesData(types);
-      console.log(types);
     };
 
     fetchTypesData();

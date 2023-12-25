@@ -64,7 +64,6 @@ const FormBalaceRecord = ({
     setFormData(initialFormData);
     handleSubmit(formData, isEditMode);
   };
-  console.log("Kategorie:", categories, "typy: ", types);
 
   return (
     <Grid container justifyContent="center">
@@ -84,7 +83,6 @@ const FormBalaceRecord = ({
                 required={true}
                 value={formData.id_type}
                 onChange={(e: SelectChangeEvent<string>) => {
-                  console.log("type wywołany");
                   const selectedTypeId = e.target.value;
                   const selectedType = types.find(
                     (type) => type.id_type === selectedTypeId
@@ -153,7 +151,6 @@ const FormBalaceRecord = ({
                 required={true}
                 value={formData.id_category}
                 onChange={(e: SelectChangeEvent<string>) => {
-                  console.log("wywołany");
                   const selectedCategoryId = e.target.value;
                   const selectedCategory = categories.find(
                     (category) => category.id_category === selectedCategoryId

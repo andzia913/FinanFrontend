@@ -35,7 +35,6 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      console.log("logowanie wysyłamy:", email, password);
       const response = await fetch(serverAddress + "/login", {
         method: "POST",
         // mode: "cors",

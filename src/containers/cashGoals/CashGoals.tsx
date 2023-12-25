@@ -53,9 +53,7 @@ const CashGoals = () => {
           return { ...goal, date: formattedDate };
         }
       );
-      console.log("cashgoals", goalsData);
       setGoalsData(goalsDataWithFormattedDate);
-      console.log("dane goals", goalsDataWithFormattedDate);
     } catch (error) {
       console.error("Błąd podczas pobierania danych celów:", error);
     }
@@ -92,13 +90,10 @@ const CashGoals = () => {
       console.error("Błąd podczas wysyłania danych na serwer.", error);
     }
   };
-  if (goalsData) {
-    console.log(typeof goalsData[0].date);
-  }
+
   const handleAddToGoal = async (e: React.FormEvent, name: string) => {
     e.preventDefault();
     setIsVisibleAddCash((prev) => ({ ...prev, [name]: true }));
-    console.log("wysyłam", "goal_name: ", name, "value: ", valueForGoal[name]);
     try {
       const response = await fetch(
         serverAddress + "/cash-goals/add/dedicated-amount",

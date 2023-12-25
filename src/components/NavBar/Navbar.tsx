@@ -59,7 +59,6 @@ const NavBar = () => {
         document.cookie =
           "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         redirect("/");
-        console.log("wylogowany");
       } else {
         console.error("Błąd podczas wylogowywania");
       }

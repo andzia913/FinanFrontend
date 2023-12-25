@@ -5,7 +5,7 @@ export type TableColumn = {
   accessor: string;
   sortable: boolean;
   Cell?: (props: { row: Row }) => JSX.Element;
-
+  show?: boolean;
 };
 
 export default TableColumn;
