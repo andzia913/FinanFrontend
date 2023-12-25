@@ -47,14 +47,12 @@ const FinancialBalance = () => {
       const dataCorectedDate = { ...data, date: new Date(data.date) };
       setRecordToEdit(dataCorectedDate);
       setIsVisibleFormEdit(true);
-      // console.log("dane recordu do edycji", dataCorectedDate);
     };
     fetchRecordData();
   };
   const handleSubmit = async (formData: FormData, isEditMode: boolean) => {
     if (isEditMode) {
       try {
-        // console.log("probujemy aktualizowac", formData);
         const response = await fetch(
           serverAddress + `/financialBalance/update/${formData.id}`,
           {
