@@ -5,3 +5,6 @@ export interface GoalEntity {
   value: number;
   date: Date;
 }
+export interface GoalEntityWithSum extends GoalEntity {
+  currValue: number;
+}

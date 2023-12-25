@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
 import { GoalEntity } from "../../types/goal.entity";
+import { Typography } from "@mui/material";
 
 interface AddGoalFormProps {
   onAddGoal: (goal: GoalEntity) => void;
@@ -25,7 +26,10 @@ const AddGoalForm: React.FC<AddGoalFormProps> = ({ onAddGoal }) => {
   };
 
   return (
-    <Box>
+    <Box style={{ marginTop: "50px", maxWidth: "400px", margin: "auto" }}>
+      <Typography variant="h6" gutterBottom color="primary">
+        Tutaj możesz zdefiniować nowy cel oszczędnościowy
+      </Typography>
       <FormControl fullWidth margin="normal" variant="outlined">
         <TextField
           id="goal-name"
