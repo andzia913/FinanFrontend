@@ -1,35 +1,21 @@
 import {
+  Alert,
   Box,
   Button,
   Container,
   Link,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
 import serverAddress from "../../utils/server";
-import { useContext, useState } from "react";
-import { redirect } from "react-router-dom";
-import AuthContext from "../../Context/AuthProvider";
-
-// const LOGIN_URL = '/auth';
+import { useState } from "react";
 
 const Login = () => {
-  const { setAuth } = useContext(AuthContext);
-  // const userRef = useRef();
-  // const errRef = useRef();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [errMsg, setErrMsg] = useState('');
   const [success, setSuccess] = useState(false);
-
-  // useEffect(() => {
-  //     userRef.current.focus();
-  // }, [])
-
-  // useEffect(() => {
-  //     setErrMsg('');
-  // }, [user, pwd])
+  const [alert, setAlert] = useState({ isShown: false, text: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,57 +28,66 @@ const Login = () => {
         },
         body: JSON.stringify({ email: email, password: password }),
       });
-      console.log(await response);
-      console.log(
-        "logowanie wysyłamy:",
-        JSON.stringify({ email: email, password: password })
-      );
+
       if (response.status === 200) {
-        console.log("To jest odpowiedz backendu");
         const responseData = await response.json();
         const accessToken = responseData.accessToken;
         localStorage.setItem("accessToken", accessToken);
-        console.log("jest token", accessToken);
-        console.log(JSON.stringify(responseData));
-        const userMail: string = responseData.userEmail + "";
-        if (setAuth) {
-          setAuth({ email: userMail });
-        }
+
         setEmail("");
         setPassword("");
         setSuccess(true);
-        redirect("/");
-        console.log("próbujemy wydrukować setAuth", AuthContext);
-        console.log("próbujemy wydrukować setAuth", sessionStorage);
+      } else if (response.status === 400) {
+        setAlert({ isShown: true, text: "Błędny login lub hasło" });
       }
     } catch (err) {
-      console.error(err);
-      // if (!err?.response) {
-      //     setErrMsg('No Server Response');
-      // } else if (err.response?.status === 400) {
-      //     setErrMsg('Missing Username or Password');
-      // } else if (err.response?.status === 401) {
-      //     setErrMsg('Unauthorized');
-      // } else {
-      //     setErrMsg('Login Failed');
-      // }
-      // errRef.current.focus();
+      if (!err) {
+        setAlert({ isShown: true, text: "Brak odpowiedzi servera" });
+      } else {
+        setAlert({
+          isShown: true,
+          text: "Logowanie nie powiodło się. Spróbuj ponownie.",
+        });
+      }
     }
   };
 
   return (
     <>
-      <Container>
+      <Container maxWidth="xs">
+        {alert && (
+          <Snackbar
+            open={alert.isShown}
+            autoHideDuration={3000}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            onClose={() =>
+              setAlert({
+                isShown: false,
+                text: "",
+              })
+            }
+          >
+            <Alert severity="error">{alert.text}</Alert>
+          </Snackbar>
+        )}
         {success ? (
           <Box mt={4}>
-            <Typography variant="h4">You are logged in!</Typography>
+            <Typography variant="h4">Zostałeś zalogowany!</Typography>
             <br />
-            <Link href="/">Go to Home</Link>
+            <Link href="/">Na stonę główną</Link>
           </Box>
         ) : (
-          <Box mt={4}>
-            <Typography variant="h4">Sign In</Typography>
-            <form onSubmit={handleSubmit}>
+          <Box
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+            mt={4}
+          >
+            <Typography variant="h4">Logowanie</Typography>
+            <Box component="form" onSubmit={handleSubmit}>
               <TextField
                 id="useremail"
                 label="Useremail"
@@ -100,6 +95,8 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 required
+                fullWidth
+                margin="normal"
               />
 
               <TextField
@@ -109,15 +106,22 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
                 required
+                fullWidth
+                margin="normal"
               />
-              <Button variant="contained" color="primary" type="submit">
-                Sign In
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                fullWidth
+              >
+                Zaloguj
               </Button>
-            </form>
-            <Typography variant="body2">
-              Need an Account?
+            </Box>
+            <Typography variant="body2" margin={1}>
+              Jeżei nie masz konta, możesz się zarejestrować
               <br />
-              <Link href="/">Sign Up</Link>
+              <Link href="/register">Zarejstruj się</Link>
             </Typography>
           </Box>
         )}
