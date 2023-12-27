@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   AppBar,
   Container,
@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
-import serverAddress from "../../utils/server";
 
 const pages = [
   { pageName: "Start", pageLink: "/" },
@@ -30,7 +29,7 @@ const pages = [
 const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-
+  const navigate = useNavigate();
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -38,18 +37,11 @@ const NavBar = () => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
   const handleLogout = async () => {
-    handleCloseUserMenu();
+    setAnchorElUser(null);
     try {
       localStorage.clear();
-      redirect("/login");
+      navigate("/login");
     } catch (error) {
       console.error("Błąd podczas wylogowywania", error);
     }
@@ -104,7 +96,7 @@ const NavBar = () => {
                   horizontal: "left",
                 }}
                 open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
+                onClose={() => setAnchorElNav(null)}
                 sx={{
                   display: { xs: "block", md: "none" },
                 }}
@@ -146,7 +138,7 @@ const NavBar = () => {
                 <Button
                   key={page.pageName}
                   href={page.pageLink}
-                  onClick={handleCloseNavMenu}
+                  onClick={() => setAnchorElNav(null)}
                   sx={{ my: 2, color: "white", display: "block" }}
                 >
                   {page.pageName}
@@ -174,7 +166,7 @@ const NavBar = () => {
                   horizontal: "right",
                 }}
                 open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
+                onClose={() => setAnchorElUser(null)}
               >
                 <MenuItem key={"logout"} onClick={handleLogout}>
                   <Typography textAlign="center">Wyloguj</Typography>
