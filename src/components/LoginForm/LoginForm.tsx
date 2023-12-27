@@ -37,7 +37,7 @@ const Login = () => {
         setEmail("");
         setPassword("");
         setSuccess(true);
-      } else if (response.status === 401) {
+      } else if (response.status === 401 || response.status === 400) {
         setAlert({ isShown: true, text: "Błędny login lub hasło" });
       }
     } catch (err) {
