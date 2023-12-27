@@ -1,16 +1,14 @@
-import { Check, Close, Info } from "@mui/icons-material";
 import {
-  Paper,
   Typography,
   Link,
-  InputLabel,
-  Input,
-  FormHelperText,
-  FormControl,
   Button,
+  Snackbar,
+  Alert,
+  Box,
+  TextField,
+  Container,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { redirect } from "react-router-dom";
 import serverAddress from "../../utils/server";
 
 type RegisterProps = {};
@@ -19,31 +17,22 @@ const Register: React.FC<RegisterProps> = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [validName, setValidName] = useState<string>("");
   const [validPassword, setValidPassword] = useState<string>("");
   const [matchPassword, setMatchPassword] = useState<string>("");
   const [validMatch, setValidMatch] = useState<boolean>(false);
-  const [errMsg, setErrMsg] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
-
-  useEffect(() => {
-    setValidName(name);
-  }, [name]);
+  const [alert, setAlert] = useState({ isShown: false, text: "" });
 
   useEffect(() => {
     setValidPassword(password);
     setValidMatch(password === matchPassword);
   }, [password, matchPassword]);
 
-  useEffect(() => {
-    setErrMsg("");
-  }, [name, password, matchPassword]);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!name || !email || !password) {
-      setErrMsg("Invalid Entry");
+      setAlert({ isShown: true, text: "Podano niewłaściwe dane" });
       return;
     }
 
@@ -54,162 +43,132 @@ const Register: React.FC<RegisterProps> = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name, email, password }),
-        // credentials: "include",
       });
-      console.log(response, "odpowiedz serwera na wysłane dane");
-      setSuccess(true);
-      setName("");
-      setEmail("");
-      setPassword("");
-      setMatchPassword("");
-      redirect("/login");
+      if (response.status === 201) {
+        setSuccess(true);
+        setName("");
+        setEmail("");
+        setPassword("");
+        setMatchPassword("");
+      } else if (response.status === 400) {
+        setAlert({
+          isShown: true,
+          text: "Podano błędne dane. Spróbuj ponownie",
+        });
+      } else if (response.status === 409) {
+        setAlert({
+          isShown: true,
+          text: "Istnieje już uzytkownik przypisany do tego adresu email",
+        });
+      }
     } catch (err) {
-      console.error(err);
+      if (!err) {
+        setAlert({ isShown: true, text: "Brak odpowiedzi servera" });
+      } else {
+        setAlert({
+          isShown: true,
+          text: "Rejstracja nie powiodło się. Spróbuj ponownie później.",
+        });
+      }
     }
   };
 
   return (
-    <Paper>
+    <Container maxWidth="xs">
+      {alert && (
+        <Snackbar
+          open={alert.isShown}
+          autoHideDuration={3000}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          onClose={() =>
+            setAlert({
+              isShown: false,
+              text: "",
+            })
+          }
+        >
+          <Alert severity="error">{alert.text}</Alert>
+        </Snackbar>
+      )}
       {success ? (
-        <section>
-          <Typography variant="h4">Success!</Typography>
+        <Box mt={4}>
+          <Typography variant="h4">Użytkownik zarejestrowany</Typography>
           <Typography>
-            <Link href="/">Sign In</Link>
+            <Link href="/login">Zaloguj się</Link>
           </Typography>
-        </section>
+        </Box>
       ) : (
-        <section>
-          <Typography
-            className={errMsg ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-          >
-            {errMsg}
-          </Typography>
-          <Typography variant="h4">Register</Typography>
-          <form onSubmit={handleSubmit}>
-            <FormControl>
-              <InputLabel htmlFor="username">
-                Imię:
-                <Check className={validName ? "valid" : "hide"} />
-                <Close className={validName || !name ? "hide" : "invalid"} />
-              </InputLabel>
-              <Input
-                type="text"
-                id="username"
-                autoComplete="off"
-                onChange={(e) => setName(e.target.value)}
-                value={name}
-                required
-                aria-invalid={validName ? "false" : "true"}
-              />
-              <FormHelperText
-                id="uidnote"
-                className={name && !validName ? "instructions" : "offscreen"}
-              >
-                <Info />
-                4 to 24 characters.
-                <br />
-                Must begin with a letter.
-                <br />
-                Letters, numbers, underscores, hyphens allowed.
-              </FormHelperText>
-            </FormControl>
+        <Box
+          sx={{
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+          mt={4}
+        >
+          <Typography variant="h4">Rejestracja</Typography>
+          <Box component="form" onSubmit={handleSubmit}>
+            <TextField
+              type="text"
+              label="Imię"
+              id="username"
+              autoComplete="off"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              required
+              fullWidth
+              margin="normal"
+            />
 
-            <FormControl>
-              <InputLabel htmlFor="email">Email:</InputLabel>
-              <Input
-                type="email"
-                id="email"
-                autoComplete="off"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-                required
-              />
-            </FormControl>
+            <TextField
+              type="email"
+              label="email"
+              id="email"
+              autoComplete="off"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              required
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              type="password"
+              id="password"
+              label="hasło"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              required
+              aria-invalid={validPassword ? "false" : "true"}
+              fullWidth
+              margin="normal"
+            />
 
-            <FormControl>
-              <InputLabel htmlFor="password">
-                Password:
-                <Check className={validPassword ? "valid" : "hide"} />
-                <Close
-                  className={validPassword || !password ? "hide" : "invalid"}
-                />
-              </InputLabel>
-              <Input
-                type="password"
-                id="password"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-                required
-                aria-invalid={validPassword ? "false" : "true"}
-              />
-              <FormHelperText
-                id="pwdnote"
-                className={
-                  password && !validPassword ? "instructions" : "offscreen"
-                }
-              >
-                <Info />
-                8 to 24 characters.
-                <br />
-                Must include uppercase and lowercase letters, a number and a
-                special character.
-                <br />
-                Allowed special characters:{" "}
-                <span aria-label="exclamation mark">!</span>{" "}
-                <span aria-label="at symbol">@</span>{" "}
-                <span aria-label="hashtag">#</span>{" "}
-                <span aria-label="dollar sign">$</span>{" "}
-                <span aria-label="percent">%</span>
-              </FormHelperText>
-            </FormControl>
-
-            <FormControl>
-              <InputLabel htmlFor="confirm_pwd">
-                Confirm Password:
-                <Check
-                  className={validMatch && matchPassword ? "valid" : "hide"}
-                />
-                <Close
-                  className={validMatch || !matchPassword ? "hide" : "invalid"}
-                />
-              </InputLabel>
-              <Input
-                type="password"
-                id="confirm_pwd"
-                onChange={(e) => setMatchPassword(e.target.value)}
-                value={matchPassword}
-                required
-                aria-invalid={validMatch ? "false" : "true"}
-              />
-              <FormHelperText
-                id="confirmnote"
-                className={
-                  matchPassword && !validMatch ? "instructions" : "offscreen"
-                }
-              >
-                <Info />
-                Must match the first password input field.
-              </FormHelperText>
-            </FormControl>
+            <TextField
+              type="password"
+              id="confirm_pwd"
+              label="Powtórz hasło"
+              onChange={(e) => setMatchPassword(e.target.value)}
+              value={matchPassword}
+              required
+              aria-invalid={validMatch ? "false" : "true"}
+              fullWidth
+              margin="normal"
+              error={!validMatch}
+            />
 
             <Button
               type="submit"
-              disabled={!validName || !validPassword || !validMatch}
+              disabled={!name || !validPassword || !validMatch}
             >
-              Sign Up
+              Zarejestruj się
             </Button>
-          </form>
-          <Typography>
-            Already registered?
-            <br />
-            <span className="line">
-              <Link href="/">Sign In</Link>
-            </span>
-          </Typography>
-        </section>
+          </Box>
+          <Typography>Masz już konto?</Typography>
+          <Link href="/login">Zaloguj się</Link>
+        </Box>
       )}
-    </Paper>
+    </Container>
   );
 };
 
