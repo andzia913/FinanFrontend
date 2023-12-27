@@ -20,6 +20,7 @@ import NavBar from "../../components/NavBar/Navbar";
 import { PieChart } from "@mui/x-charts/PieChart";
 import serverAddress from "../../utils/server";
 import { CategoriesTotal } from "types/category.entity";
+import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
 
 const CostStructure = () => {
   const [categoriesData, setCategoriesData] = useState<CategoriesTotal[]>();
@@ -29,10 +30,12 @@ const CostStructure = () => {
 
   const fetchCategoriesData = async () => {
     try {
-      const res = await fetch(serverAddress + `/cost-structure`);
+      const res = await fetch(
+        serverAddress + `/cost-structure`,
+        fetchOptionsGETWithToken
+      );
       const categoriesData = await res.json();
       setCategoriesData(categoriesData);
-      console.log("dane categories", categoriesData);
     } catch (error) {
       console.error("Błąd podczas pobierania danych kategorii:", error);
     }
@@ -44,6 +47,7 @@ const CostStructure = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("accessToken"),
         },
         body: JSON.stringify({ category_name: categoryName }),
       });
@@ -71,6 +75,7 @@ const CostStructure = () => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
           },
         }
       );

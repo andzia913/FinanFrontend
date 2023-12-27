@@ -48,20 +48,8 @@ const NavBar = () => {
   const handleLogout = async () => {
     handleCloseUserMenu();
     try {
-      const response = await fetch(serverAddress + "/login", {
-        method: "DELETE",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.status === 200) {
-        document.cookie =
-          "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        redirect("/");
-      } else {
-        console.error("Błąd podczas wylogowywania");
-      }
+      localStorage.clear();
+      redirect("/login");
     } catch (error) {
       console.error("Błąd podczas wylogowywania", error);
     }

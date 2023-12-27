@@ -18,6 +18,7 @@ import LinearWithValueLabel from "../../components/ProgressBarWithLabel/Progress
 import AddGoalForm from "../../components/AddGoalForm/AddGoalForm";
 import serverAddress from "../../utils/server";
 import { GoalEntity, GoalEntityWithSum } from "../../types/goal.entity";
+import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
 
 interface AlertType {
   isShown: boolean;
@@ -45,7 +46,10 @@ const CashGoals = () => {
 
   const fetchGoalsData = async () => {
     try {
-      const res = await fetch(serverAddress + `/cash-goals`);
+      const res = await fetch(
+        serverAddress + `/cash-goals`,
+        fetchOptionsGETWithToken
+      );
       const goalsData = await res.json();
       const goalsDataWithFormattedDate = goalsData.map(
         (goal: GoalEntityWithSum) => {
@@ -76,6 +80,7 @@ const CashGoals = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("accessToken"),
         },
         body: JSON.stringify(goal),
       });
@@ -101,6 +106,7 @@ const CashGoals = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
           },
           body: JSON.stringify({ goal_name: name, value: valueForGoal[name] }),
         }

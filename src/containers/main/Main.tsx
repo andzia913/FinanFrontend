@@ -15,6 +15,7 @@ import serverAddress from "../../utils/server";
 import { GoalEntityWithSum } from "../../types/goal.entity";
 import { CategoriesTotal } from "types/category.entity";
 import LinearWithValueLabel from "../../components/ProgressBarWithLabel/ProgressBarWithLabel";
+import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
 
 const HomePage = () => {
   const [goalsData, setGoalsData] = useState<GoalEntityWithSum[] | null>();
@@ -22,19 +23,28 @@ const HomePage = () => {
   const [balanceTotal, setBalanceTotal] = useState(0);
   const [balanceCosts, setBalanceCosts] = useState(0);
   const [balanceIncome, setBalanceIncome] = useState(0);
-  // const [lastUpdateDate, setLastUpdateDate] = useState("");
+  const [lastUpdateDate, setLastUpdateDate] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const goalsRes = await fetch(serverAddress + `/cash-goals`);
+        const goalsRes = await fetch(
+          serverAddress + `/cash-goals`,
+          fetchOptionsGETWithToken
+        );
         const goalsData = await goalsRes.json();
 
-        const categoriesRes = await fetch(serverAddress + `/cost-structure`);
+        const categoriesRes = await fetch(
+          serverAddress + `/cost-structure`,
+          fetchOptionsGETWithToken
+        );
         const categoriesData = await categoriesRes.json();
 
-        const balanceRes = await fetch(serverAddress + "/financialBalance");
+        const balanceRes = await fetch(
+          serverAddress + "/financialBalance",
+          fetchOptionsGETWithToken
+        );
         const { financialBalance, balanceCostSum, balanceIncomeSum } =
           await balanceRes.json();
         const total = balanceIncomeSum.totalIncome - balanceCostSum.totalCost;

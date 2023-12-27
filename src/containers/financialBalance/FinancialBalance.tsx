@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import NavBar from "../../components/NavBar/Navbar.tsx";
 import serverAddress from "../../utils/server.ts";
+import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken.tsx";
 
 const FinancialBalance = () => {
   const [balanceData, setBalanceData] = useState<BalanceEntity[]>();
@@ -29,7 +30,10 @@ const FinancialBalance = () => {
   const [balanceTotal, setBalanceTotal] = useState(0);
 
   const fetchBalanceData = async () => {
-    const res = await fetch(serverAddress + "/financialBalance");
+    const res = await fetch(
+      serverAddress + "/financialBalance",
+      fetchOptionsGETWithToken
+    );
     const { financialBalance, balanceCostSum, balanceIncomeSum } =
       await res.json();
     const total = balanceIncomeSum.totalIncome - balanceCostSum.totalCost;
@@ -41,7 +45,8 @@ const FinancialBalance = () => {
   const handleEditClick = (id: string) => {
     const fetchRecordData = async () => {
       const res = await fetch(
-        serverAddress + `/financialBalance/get-one/${id}`
+        serverAddress + `/financialBalance/get-one/${id}`,
+        fetchOptionsGETWithToken
       );
       const data: BalanceEntity = await res.json();
       const dataCorectedDate = { ...data, date: new Date(data.date) };
@@ -59,7 +64,9 @@ const FinancialBalance = () => {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("accessToken"),
             },
+
             body: JSON.stringify(formData),
           }
         );
@@ -81,6 +88,7 @@ const FinancialBalance = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
           },
           body: JSON.stringify(formData),
         });
@@ -113,7 +121,10 @@ const FinancialBalance = () => {
 
   useEffect(() => {
     const fetchCategoriesData = async () => {
-      const res = await fetch(serverAddress + "/financialBalance/categories");
+      const res = await fetch(
+        serverAddress + "/financialBalance/categories",
+        fetchOptionsGETWithToken
+      );
       const categories: CategoryEntity[] = await res.json();
       categoriesDataRef.current = categories;
       setCategoriesData(categories);
@@ -124,7 +135,10 @@ const FinancialBalance = () => {
 
   useEffect(() => {
     const fetchTypesData = async () => {
-      const res = await fetch(serverAddress + "/financialBalance/types");
+      const res = await fetch(
+        serverAddress + "/financialBalance/types",
+        fetchOptionsGETWithToken
+      );
       const types: TypeEntity[] = await res.json();
       // typesDataRef.current = types;
       setTypesData(types);

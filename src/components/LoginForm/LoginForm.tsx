@@ -37,12 +37,10 @@ const Login = () => {
     try {
       const response = await fetch(serverAddress + "/login", {
         method: "POST",
-        // mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email: email, password: password }),
-        // credentials: "include",
       });
       console.log(await response);
       console.log(
@@ -52,6 +50,9 @@ const Login = () => {
       if (response.status === 200) {
         console.log("To jest odpowiedz backendu");
         const responseData = await response.json();
+        const accessToken = responseData.accessToken;
+        localStorage.setItem("accessToken", accessToken);
+        console.log("jest token", accessToken);
         console.log(JSON.stringify(responseData));
         const userMail: string = responseData.userEmail + "";
         if (setAuth) {
