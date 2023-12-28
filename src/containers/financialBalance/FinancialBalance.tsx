@@ -12,7 +12,9 @@ import {
   CircularProgress,
   Container,
   Dialog,
+  Grid,
   Link,
+  Snackbar,
 } from "@mui/material";
 import NavBar from "../../components/NavBar/Navbar.tsx";
 import serverAddress from "../../utils/server.ts";
@@ -30,6 +32,7 @@ const FinancialBalance = () => {
   const categoriesDataRef = useRef<CategoryEntity[] | null>(null);
   const typesDataRef = useRef<TypeEntity[] | null>(null);
   const [balanceTotal, setBalanceTotal] = useState(0);
+  const [alert, setAlert] = useState({ isShown: false, text: "" });
 
   const fetchBalanceData = async () => {
     const res = await fetch(
@@ -46,11 +49,11 @@ const FinancialBalance = () => {
 
   const handleEditClick = (id: string) => {
     const fetchRecordData = async () => {
-      const res = await fetch(
+      const response = await fetch(
         serverAddress + `/financialBalance/get-one/${id}`,
         fetchOptionsGETWithToken
       );
-      const data: BalanceEntity = await res.json();
+      const data: BalanceEntity = await response.json();
       const dataCorectedDate = { ...data, date: new Date(data.date) };
       setRecordToEdit(dataCorectedDate);
       setIsVisibleFormEdit(true);
@@ -72,6 +75,14 @@ const FinancialBalance = () => {
             body: JSON.stringify(formData),
           }
         );
+        if (response.status === 403) {
+          setAlert({
+            isShown: true,
+            text: "Nie mozna edytować danych dla tej kategorii ponieważ jest związana z realizacją celów oszczędnościowych. Możesz usunąć rekord.",
+          });
+          setIsVisibleFormEdit(false);
+          return;
+        }
         setRecordToEdit(null);
         fetchBalanceData();
         if (response.ok) {
@@ -143,17 +154,27 @@ const FinancialBalance = () => {
         fetchOptionsGETWithToken
       );
       const types: TypeEntity[] = await res.json();
-      // typesDataRef.current = types;
       setTypesData(types);
     };
 
     fetchTypesData();
   }, [typesDataRef]);
+  const handleClose = () => setIsVisibleFormEdit(false);
 
   return (
     <>
       <Container disableGutters={true}>
         <NavBar />
+        {alert && (
+          <Snackbar
+            open={alert.isShown}
+            autoHideDuration={3000}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            onClose={() => setAlert({ isShown: false, text: "" })}
+          >
+            <Alert severity="error">{alert.text}</Alert>
+          </Snackbar>
+        )}
         <Box
           style={{
             border: `${
@@ -194,16 +215,20 @@ const FinancialBalance = () => {
         ) : (
           <>
             {isVisilbeFormAdd ? (
-              <FormBalanceRecord
-                categories={categoriesData!}
-                types={typesData!}
-                recordToEdit={recordToEdit!}
-                handleSubmit={handleSubmit}
-              />
+              <Grid container justifyContent="center">
+                <Grid item xs={10} sm={8} md={6} lg={4}>
+                  <FormBalanceRecord
+                    categories={categoriesData!}
+                    types={typesData!}
+                    recordToEdit={recordToEdit!}
+                    handleSubmit={handleSubmit}
+                  />
+                </Grid>
+              </Grid>
             ) : (
               ""
             )}
-            <Dialog open={isVisilbeFormEdit} maxWidth={undefined}>
+            <Dialog open={isVisilbeFormEdit} onClose={handleClose}>
               <FormBalanceRecord
                 categories={categoriesData!}
                 types={typesData!}

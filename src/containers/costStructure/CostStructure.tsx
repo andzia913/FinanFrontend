@@ -148,7 +148,7 @@ const CostStructure = () => {
               }
             >
               <ListItemText primary={category.category} />
-              <Box style={{ marginLeft: "15%", marginRight: "15%" }}>
+              <Box style={{ marginRight: "10%" }}>
                 {category.total.toFixed(2)} zł
               </Box>
             </ListItem>

@@ -67,132 +67,133 @@ const FormBalaceRecord = ({
 
   return (
     <Grid container justifyContent="center">
-      <Grid item xs={10} sm={8} md={6}>
+      <Grid item xs={12} sm={12} md={12}>
         <Paper elevation={3} style={{ padding: "20px" }}>
-          <form
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="type-label">Typ</InputLabel>
+            <Select
+              labelId="type-label"
+              id="type"
+              name="type"
+              required={true}
+              value={formData.id_type}
+              onChange={(e: SelectChangeEvent<string>) => {
+                const selectedTypeId = e.target.value;
+                const selectedType = types.find(
+                  (type) => type.id_type === selectedTypeId
+                );
+
+                setFormData({
+                  ...formData,
+                  id_type: selectedTypeId,
+                  type_name: selectedType?.type_name || "",
+                });
+              }}
+            >
+              {types.map((type) => (
+                <MenuItem key={type.id_type} value={type.id_type}>
+                  {type.type_name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <TextField
+              id="date"
+              name="date"
+              label="Data"
+              type="date"
+              required={true}
+              value={formatDateForInput(formData.date)}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  date: new Date(e.target.value),
+                });
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <TextField
+              id="value"
+              name="value"
+              label="Wartość"
+              type="number"
+              required={true}
+              value={formData.value}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  value: Number(e.target.value),
+                });
+              }}
+              InputProps={{
+                inputProps: {
+                  step: "0.01",
+                },
+              }}
+            />
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="category-label">Kategoria</InputLabel>
+            <Select
+              labelId="category-label"
+              id="category"
+              name="category"
+              required={true}
+              value={formData.id_category}
+              onChange={(e: SelectChangeEvent<string>) => {
+                const selectedCategoryId = e.target.value;
+                const selectedCategory = categories.find(
+                  (category) => category.id_category === selectedCategoryId
+                );
+                setFormData({
+                  ...formData,
+                  id_category: e.target.value,
+                  category_name: selectedCategory?.category_name || "",
+                });
+              }}
+            >
+              {categories.map((category) => (
+                <MenuItem
+                  key={category.id_category}
+                  value={category.id_category}
+                >
+                  {category.category_name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <TextField
+              id="comment"
+              name="comment"
+              label="Komentarz"
+              // contentEditable={true}
+              multiline
+              rows={4}
+              value={formData.comment}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                setFormData({
+                  ...formData,
+                  comment: e.target.value,
+                });
+              }}
+            />
+          </FormControl>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
             onSubmit={(e) => {
               handleClickSubmit(e, formData);
             }}
           >
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="type-label">Typ</InputLabel>
-              <Select
-                labelId="type-label"
-                id="type"
-                name="type"
-                required={true}
-                value={formData.id_type}
-                onChange={(e: SelectChangeEvent<string>) => {
-                  const selectedTypeId = e.target.value;
-                  const selectedType = types.find(
-                    (type) => type.id_type === selectedTypeId
-                  );
-
-                  setFormData({
-                    ...formData,
-                    id_type: selectedTypeId,
-                    type_name: selectedType?.type_name || "",
-                  });
-                }}
-              >
-                {types.map((type) => (
-                  <MenuItem key={type.id_type} value={type.id_type}>
-                    {type.type_name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                id="date"
-                name="date"
-                label="Data"
-                type="date"
-                required={true}
-                value={formatDateForInput(formData.date)}
-                onChange={(e) => {
-                  setFormData({
-                    ...formData,
-                    date: new Date(e.target.value),
-                  });
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                id="value"
-                name="value"
-                label="Wartość"
-                type="number"
-                required={true}
-                value={formData.value}
-                onChange={(e) => {
-                  setFormData({
-                    ...formData,
-                    value: Number(e.target.value),
-                  });
-                }}
-                InputProps={{
-                  inputProps: {
-                    step: "0.01",
-                  },
-                }}
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="category-label">Kategoria</InputLabel>
-              <Select
-                labelId="category-label"
-                id="category"
-                name="category"
-                required={true}
-                value={formData.id_category}
-                onChange={(e: SelectChangeEvent<string>) => {
-                  const selectedCategoryId = e.target.value;
-                  const selectedCategory = categories.find(
-                    (category) => category.id_category === selectedCategoryId
-                  );
-                  setFormData({
-                    ...formData,
-                    id_category: e.target.value,
-                    category_name: selectedCategory?.category_name || "",
-                  });
-                }}
-              >
-                {categories.map((category) => (
-                  <MenuItem
-                    key={category.id_category}
-                    value={category.id_category}
-                  >
-                    {category.category_name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                id="comment"
-                name="comment"
-                label="Komentarz"
-                // contentEditable={true}
-                multiline
-                rows={4}
-                value={formData.comment}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                  setFormData({
-                    ...formData,
-                    comment: e.target.value,
-                  });
-                }}
-              />
-            </FormControl>
-            <Button variant="contained" color="primary" type="submit">
-              {isEditMode ? "Aktualizuj rekord" : "Dodaj nowy rekord"}
-            </Button>
-          </form>
+            {isEditMode ? "Aktualizuj rekord" : "Dodaj nowy rekord"}
+          </Button>
         </Paper>
       </Grid>
     </Grid>

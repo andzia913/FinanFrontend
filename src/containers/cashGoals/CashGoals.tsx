@@ -26,7 +26,7 @@ interface AlertType {
 }
 enum AlertSeverityOption {
   error = "error",
-  succes = "success",
+  success = "success",
 }
 
 const CashGoals = () => {
@@ -114,6 +114,22 @@ const CashGoals = () => {
   const handleAddToGoal = async (e: React.FormEvent, name: string) => {
     e.preventDefault();
     setIsVisibleAddCash((prev) => ({ ...prev, [name]: true }));
+    const goalData = goalsData?.find((goal) => goal.goal_name === name);
+    let correctedValue;
+    if (
+      goalData &&
+      goalData?.currValue + valueForGoal[name] > goalData?.value
+    ) {
+      correctedValue = goalData.value - goalData.currValue;
+      setAlert({
+        isShown: true,
+        severity: AlertSeverityOption.success,
+        text: `Podana kwota przkraczała wartość celu, dodano tylko ${(
+          goalData.value - goalData.currValue
+        ).toFixed(2)}`,
+      });
+      console.log(valueForGoal);
+    }
     try {
       const response = await fetch(
         serverAddress + "/cash-goals/add/dedicated-amount",
@@ -123,18 +139,22 @@ const CashGoals = () => {
             "Content-Type": "application/json",
             Authorization: "Bearer " + localStorage.getItem("accessToken"),
           },
-          body: JSON.stringify({ goal_name: name, value: valueForGoal[name] }),
+          body: JSON.stringify({
+            goal_name: name,
+            value: correctedValue ? correctedValue : valueForGoal[name],
+          }),
         }
       );
+      console.log(valueForGoal);
 
       if (response.ok) {
         fetchGoalsData();
         setIsVisibleAddCash((prev) => ({ ...prev, [name]: false }));
-        setAlert({
-          isShown: true,
-          severity: AlertSeverityOption.succes,
-          text: `Kwota dodana pomyślnie na cel: ${name}`,
-        });
+        // setAlert({
+        //   isShown: true,
+        //   severity: AlertSeverityOption.success,
+        //   text: `Kwota dodana pomyślnie na cel: ${name}`,
+        // });
         setValueForGoal({
           ...valueForGoal,
           [name]: 0,
