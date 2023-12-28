@@ -26,7 +26,7 @@ const AddGoalForm: React.FC<AddGoalFormProps> = ({ onAddGoal }) => {
   };
 
   return (
-    <Box style={{ marginTop: "50px", maxWidth: "400px", margin: "auto" }}>
+    <Box style={{ margin: "50px auto", maxWidth: "400px" }}>
       <Typography variant="h6" gutterBottom color="primary">
         Tutaj możesz zdefiniować nowy cel oszczędnościowy
       </Typography>

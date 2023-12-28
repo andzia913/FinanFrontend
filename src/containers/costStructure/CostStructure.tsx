@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Container,
   List,
-  Divider,
   ListItemText,
   ListItem,
   Button,
@@ -26,7 +25,7 @@ const CostStructure = () => {
   const [categoriesData, setCategoriesData] = useState<CategoriesTotal[]>();
   const [isVisibleFormAdd, setIsVisibleFormAdd] = useState(false);
   const [categoryName, setCategoryName] = useState("");
-  const [alert, setAlert] = useState(false);
+  const [alert, setAlert] = useState({ isShown: false, text: "" });
 
   const fetchCategoriesData = async () => {
     try {
@@ -43,6 +42,10 @@ const CostStructure = () => {
 
   const handleSubmit = async () => {
     try {
+      if (categoriesData?.find((item) => item.category === categoryName)) {
+        setAlert({ isShown: true, text: "Podana kategoria już istnieje." });
+        return;
+      }
       const response = await fetch(serverAddress + `/cost-structure`, {
         method: "POST",
         headers: {
@@ -52,9 +55,14 @@ const CostStructure = () => {
         body: JSON.stringify({ category_name: categoryName }),
       });
       if (response.ok) {
-        const responseData = await response.json();
-        console.log("Dane zostały pomyślnie wysłane na serwer.", responseData);
         fetchCategoriesData();
+        setIsVisibleFormAdd(false);
+        setCategoryName("");
+      } else if (response.status === 401) {
+        setAlert({
+          isShown: true,
+          text: "Wprowadzono błędne dane.",
+        });
       } else {
         console.error("Błąd podczas wysyłania danych na serwer.");
       }
@@ -64,7 +72,10 @@ const CostStructure = () => {
   };
   const onDeleteClick = async (id: string, total: number) => {
     if (total !== 0) {
-      setAlert(true);
+      setAlert({
+        isShown: true,
+        text: "Nie można usunąć kategorii, jeżeli są z nią powiązane inne rekordy",
+      });
       console.error("Cannot delete item with another records relations ");
       return;
     }
@@ -80,12 +91,13 @@ const CostStructure = () => {
         }
       );
       if (response.ok) {
-        const responseData = response;
         fetchCategoriesData();
-        console.log("Dane zostały pomyślnie usunięte.", responseData);
       }
-      if (response.status === 400) {
-        setAlert(true);
+      if (response.status === 404) {
+        setAlert({
+          isShown: true,
+          text: "Nie można usunąć wybranego rekordu, spróbuj ponownie później",
+        });
       }
     } catch (error) {
       console.error("Błąd podczas wysyłania danych na serwer. DELETE", error);
@@ -100,7 +112,10 @@ const CostStructure = () => {
     categoriesData?.map((category, index) => ({
       id: index,
       value: category.total,
-      label: category.category,
+      label:
+        category.category.length > 25
+          ? category.category.slice(0, 22) + "..."
+          : category.category,
     })) || undefined;
 
   return (
@@ -108,39 +123,35 @@ const CostStructure = () => {
       <NavBar />
       {alert && (
         <Snackbar
-          open={alert}
+          open={alert.isShown}
           autoHideDuration={3000}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          onClose={() => setAlert(false)}
+          onClose={() => setAlert({ isShown: false, text: "" })}
         >
-          <Alert severity="error">
-            Nie można usunąć kategorii z powiązanymi rekordami
-          </Alert>
+          <Alert severity="error">{alert.text}</Alert>
         </Snackbar>
       )}
       <List component="nav" aria-label="mailbox folders">
         {categoriesData &&
           categoriesData.map((category) => (
-            <>
-              <ListItem
-                key={category.id}
-                secondaryAction={
-                  <IconButton
-                    onClick={() => onDeleteClick(category.id, category.total)}
-                    edge="end"
-                    aria-label="delete"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                }
-              >
-                <ListItemText primary={category.category} />
-                <Box style={{ marginLeft: "15%", marginRight: "15%" }}>
-                  {category.total}
-                </Box>
-              </ListItem>
-              <Divider />
-            </>
+            <ListItem
+              key={category.id}
+              divider
+              secondaryAction={
+                <IconButton
+                  onClick={() => onDeleteClick(category.id, category.total)}
+                  edge="end"
+                  aria-label="delete"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              }
+            >
+              <ListItemText primary={category.category} />
+              <Box style={{ marginLeft: "15%", marginRight: "15%" }}>
+                {category.total.toFixed(2)} zł
+              </Box>
+            </ListItem>
           ))}
       </List>
       {!isVisibleFormAdd ? (
@@ -166,22 +177,30 @@ const CostStructure = () => {
             color="success"
             type="submit"
           >
-            <AddIcon /> Dodaj nową kategorię
+            <AddIcon /> Dodaj
           </Button>
         </FormControl>
       )}
 
       {arrForChart && (
         <PieChart
+          slotProps={{
+            legend: {
+              direction: "row",
+              position: { vertical: "top", horizontal: "middle" },
+              padding: 15,
+            },
+          }}
           series={[
             {
               data: arrForChart,
+              outerRadius: 120,
               highlightScope: { faded: "global", highlighted: "item" },
               faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
             },
           ]}
-          width={600}
-          height={300}
+          width={undefined}
+          height={600}
         />
       )}
     </Container>

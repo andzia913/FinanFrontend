@@ -9,14 +9,13 @@ export const tableColumns: TableColumn[] = [
     Header: "Data",
     accessor: "date",
     sortable: true,
-    Cell: ({ row }) => (
-      <span>{new Date(row.original.date).toLocaleDateString()}</span>
-    ),
+    Cell: ({ row }) => <>{new Date(row.original.date).toLocaleDateString()}</>,
   },
   {
     Header: "Wartość",
     accessor: "value",
     sortable: true,
+    Cell: ({ row }) => <>{row.original.value.toFixed(2)}</>,
   },
   {
     Header: "Kategoria",

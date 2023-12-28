@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -80,13 +80,13 @@ const HomePage = () => {
         <CardHeader title="Bilans przychodów i kosztów" />
         <CardContent>
           <Typography variant="h4" color="primary" gutterBottom>
-            Wynik: {balanceTotal} zł
+            Wynik: {balanceTotal.toFixed(2)} zł
           </Typography>
           <Typography variant="body1" color="textSecondary" gutterBottom>
-            Koszty: {balanceCosts} zł
+            Koszty: {balanceCosts.toFixed(2)} zł
           </Typography>
           <Typography variant="body1" color="textSecondary" gutterBottom>
-            Przychody: {balanceIncome} zł
+            Przychody: {balanceIncome.toFixed(2)} zł
           </Typography>
           <Button
             component={Link}
@@ -102,7 +102,7 @@ const HomePage = () => {
   );
 
   const renderGoalInfo = (title: string, value: number, date: string) => (
-    <Grid item xs={12} sm={12} md={6} lg={4}>
+    <Grid key={title} item xs={12} sm={12} md={6} lg={4}>
       <Card variant="outlined" style={{ height: "100%" }}>
         <CardHeader color="primary" title={title} />
         <CardContent>
@@ -116,12 +116,12 @@ const HomePage = () => {
   );
 
   const renderStructureTile = (title: string, percent: number) => (
-    <Grid item xs={12} sm={12} md={4} lg={4}>
+    <Grid key={title} item xs={12} sm={12} md={4} lg={4}>
       <Card variant="outlined" style={{ height: "100%" }}>
         <CardHeader title={title} />
         <CardContent>
           <Typography variant="h4" color="primary" gutterBottom>
-            {`${percent.toFixed(2)}%`}
+            {`${percent.toFixed()}%`}
           </Typography>
           <Typography variant="body1" color="textSecondary" gutterBottom>
             {`Kategoria: ${title}`}
@@ -162,6 +162,14 @@ const HomePage = () => {
                         )
                       )}
                 </Grid>
+                <Button
+                  component={Link}
+                  to="/cost-structure"
+                  variant="outlined"
+                  color="primary"
+                >
+                  Przejdź
+                </Button>
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4}>

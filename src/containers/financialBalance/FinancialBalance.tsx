@@ -2,15 +2,17 @@ import { useEffect, useState, useRef } from "react";
 import TableBalance from "../../components/TableBalance/TableBalance.tsx";
 import { tableColumns } from "../../components/TableBalance/tableColumns";
 import FormBalanceRecord from "../../components/FormBalaceRecord/FormBalanceRecord.tsx";
-import { BalanceEntity } from "types/balance.entity.ts";
+import { BalanceEntity, FormData } from "types/balance.entity.ts";
 import { CategoryEntity } from "types/category.entity.ts";
 import { TypeEntity } from "types/type.entity.ts";
 import {
+  Alert,
   Box,
   Button,
   CircularProgress,
   Container,
   Dialog,
+  Link,
 } from "@mui/material";
 import NavBar from "../../components/NavBar/Navbar.tsx";
 import serverAddress from "../../utils/server.ts";
@@ -37,7 +39,7 @@ const FinancialBalance = () => {
     const { financialBalance, balanceCostSum, balanceIncomeSum } =
       await res.json();
     const total = balanceIncomeSum.totalIncome - balanceCostSum.totalCost;
-    setBalanceTotal(Number(total.toFixed(2)));
+    setBalanceTotal(total);
     balanceDataRef.current = financialBalance;
     setBalanceData(financialBalance);
   };
@@ -110,6 +112,7 @@ const FinancialBalance = () => {
 
   useEffect(() => {
     if (balanceData && categoriesData && typesData) {
+      console.log("useEffect", categoriesData, balanceData, typesData);
       setLoadingData(false);
     } else {
       setLoadingData(true);
@@ -166,7 +169,7 @@ const FinancialBalance = () => {
               marginLeft: "15px",
             }}
           >
-            {balanceTotal} zł
+            {balanceTotal.toFixed(2)} zł
           </span>
         </Box>
 
@@ -174,9 +177,17 @@ const FinancialBalance = () => {
           variant="contained"
           color="primary"
           onClick={() => setIsVisibleFormAdd(isVisilbeFormAdd ? false : true)}
+          disabled={categoriesData?.length === 0}
+          style={{ margin: "10px" }}
         >
           Dodaj nowy rekord
         </Button>
+        {categoriesData?.length === 0 && (
+          <Alert severity="info">
+            Aby dodać recordy do bilansu, potrzebujesz najpierw zdefiniować
+            kategorie, możesz przejść <Link href="/cost-structure">tutaj</Link>.
+          </Alert>
+        )}
 
         {loadingData ? (
           <CircularProgress />

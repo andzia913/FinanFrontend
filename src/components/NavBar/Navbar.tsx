@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 const pages = [
   { pageName: "Start", pageLink: "/" },
@@ -149,7 +150,10 @@ const NavBar = () => {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  {/* <SettingsIcon /> */}
+                  <Avatar>
+                    <SettingsIcon />
+                  </Avatar>
                 </IconButton>
               </Tooltip>
               <Menu

@@ -9,3 +9,9 @@ export interface CategoriesTotal {
   category: string;
   total: number;
 }
+
+export interface PieChartData {
+  id: number;
+  value: number;
+  label: string;
+}

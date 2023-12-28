@@ -1,6 +1,5 @@
 import {
   Alert,
-  AlertColor,
   Box,
   Button,
   Container,
@@ -75,6 +74,17 @@ const CashGoals = () => {
           text: "Cel nie może mieć wartości równej, bądź mniejszej od 0.",
         });
         return;
+      } else if (
+        goalsData?.find(
+          (goalFromData) => goalFromData.goal_name === goal.goal_name
+        )
+      ) {
+        setAlert({
+          isShown: true,
+          severity: AlertSeverityOption.error,
+          text: "Istneje już cel o tej nazwie.",
+        });
+        return;
       }
       const response = await fetch(serverAddress + "/cash-goals/add", {
         method: "POST",
@@ -88,8 +98,13 @@ const CashGoals = () => {
       if (response.ok) {
         const responseData = await response.json();
         console.log("Dane zostały pomyślnie wysłane na serwer.", responseData);
-      } else {
-        console.error("Błąd podczas wysyłania danych na serwer.");
+      } else if (response.status === 401) {
+        setAlert({
+          isShown: true,
+          severity: AlertSeverityOption.error,
+          text: "Wprowadzono niepoprawne dane",
+        });
+        return;
       }
     } catch (error) {
       console.error("Błąd podczas wysyłania danych na serwer.", error);
@@ -113,7 +128,6 @@ const CashGoals = () => {
       );
 
       if (response.ok) {
-        const responseData = await response.json();
         fetchGoalsData();
         setIsVisibleAddCash((prev) => ({ ...prev, [name]: false }));
         setAlert({
@@ -121,7 +135,10 @@ const CashGoals = () => {
           severity: AlertSeverityOption.succes,
           text: `Kwota dodana pomyślnie na cel: ${name}`,
         });
-        console.log("Dane zostały pomyślnie wysłane na serwer.", responseData);
+        setValueForGoal({
+          ...valueForGoal,
+          [name]: 0,
+        });
       } else {
         console.error("Błąd podczas wysyłania danych na serwer.");
       }
@@ -150,7 +167,7 @@ const CashGoals = () => {
         </Snackbar>
       )}
       <Typography variant="h4" color="primary" gutterBottom>
-        Cele oszczędnościowe{" "}
+        Cele oszczędnościowe
       </Typography>
       <Grid
         container
@@ -195,12 +212,16 @@ const CashGoals = () => {
                       variant="contained"
                       color="primary"
                       type="submit"
-                      onClick={() =>
+                      onClick={() => {
                         setIsVisibleAddCash((prev) => ({
                           ...prev,
                           [goal.goal_name]: !prev[goal.goal_name],
-                        }))
-                      }
+                        }));
+                        setValueForGoal({
+                          ...valueForGoal,
+                          [goal.goal_name]: 0,
+                        });
+                      }}
                     >
                       Dodaj na ten cel
                     </Button>
