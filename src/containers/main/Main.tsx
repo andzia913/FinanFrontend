@@ -30,13 +30,13 @@ const HomePage = () => {
     const fetchData = async () => {
       try {
         const goalsRes = await fetch(
-          serverAddress + `/cash-goals`,
+          serverAddress + `/cashGoals`,
           fetchOptionsGETWithToken
         );
         const goalsData = await goalsRes.json();
 
         const categoriesRes = await fetch(
-          serverAddress + `/cost-structure`,
+          serverAddress + `/costStructure`,
           fetchOptionsGETWithToken
         );
         const categoriesData = await categoriesRes.json();
@@ -45,21 +45,28 @@ const HomePage = () => {
           serverAddress + "/financialBalance",
           fetchOptionsGETWithToken
         );
-        const { financialBalance, balanceCostSum, balanceIncomeSum } =
-          await balanceRes.json();
-        const total = balanceIncomeSum.totalIncome - balanceCostSum.totalCost;
-        const costs = balanceCostSum.totalCost;
-        const income = balanceIncomeSum.totalIncome;
-        const lastUpdate = financialBalance.length
-          ? new Date(financialBalance[0].date).toLocaleDateString()
-          : "";
-
+        const balanceData = await balanceRes.json();
+        if (balanceData.balanceIncomeSum) {
+          const total =
+            balanceData.balanceIncomeSum - balanceData.balanceCostSum;
+          const costs = balanceData.balanceCostSum;
+          const income = balanceData.balanceIncomeSum;
+          const lastUpdate = balanceData.financialBalance.length
+            ? new Date(
+                balanceData.financialBalance[0].date
+              ).toLocaleDateString()
+            : "";
+          setBalanceTotal(Number(total.toFixed(2)));
+          setBalanceCosts(costs);
+          setBalanceIncome(income);
+          setLastUpdateDate(lastUpdate);
+        } else {
+          setBalanceTotal(0);
+          setBalanceCosts(0);
+          setBalanceIncome(0);
+        }
         setGoalsData(goalsData);
         setCategoriesData(categoriesData);
-        setBalanceTotal(Number(total.toFixed(2)));
-        setBalanceCosts(costs);
-        setBalanceIncome(income);
-        setLastUpdateDate(lastUpdate);
         setLoading(false);
       } catch (error) {
         console.error("Błąd podczas pobierania danych:", error);
@@ -158,7 +165,9 @@ const HomePage = () => {
                       .map((category) =>
                         renderStructureTile(
                           category.category,
-                          (category.total / balanceCosts) * 100
+                          balanceCosts !== 0
+                            ? (category.total / balanceCosts) * 100
+                            : 0
                         )
                       )}
                 </Grid>

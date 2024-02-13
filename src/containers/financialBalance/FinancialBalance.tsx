@@ -39,12 +39,17 @@ const FinancialBalance = () => {
       serverAddress + "/financialBalance",
       fetchOptionsGETWithToken
     );
-    const { financialBalance, balanceCostSum, balanceIncomeSum } =
-      await res.json();
-    const total = balanceIncomeSum.totalIncome - balanceCostSum.totalCost;
-    setBalanceTotal(total);
-    balanceDataRef.current = financialBalance;
-    setBalanceData(financialBalance);
+    const balanceData = await res.json();
+
+    if (balanceData.balanceCostSum) {
+      const total = balanceData.balanceIncomeSum - balanceData.balanceCostSum;
+      setBalanceTotal(total);
+    } else {
+      setBalanceTotal(0);
+    }
+
+    balanceDataRef.current = balanceData.financialBalance;
+    setBalanceData(balanceData.financialBalance);
   };
 
   const handleEditClick = (id: string) => {
@@ -85,12 +90,12 @@ const FinancialBalance = () => {
         }
         setRecordToEdit(null);
         fetchBalanceData();
-        if (response.ok) {
-          const responseData = await response.json();
-          console.log("Dane zostały pomyślnie zaktualizoane.", responseData);
-        } else {
-          console.error("Błąd podczas wysyłania danych na serwer.");
-        }
+        // if (response.ok) {
+        //   const responseData = await response.json();
+        //   console.log("Dane zostały pomyślnie zaktualizoane.", responseData);
+        // } else {
+        //   console.error("Błąd podczas wysyłania danych na serwer.");
+        // }
       } catch (error) {
         console.error("Błąd podczas wysyłania danych na serwer.", error);
       }
@@ -123,7 +128,6 @@ const FinancialBalance = () => {
 
   useEffect(() => {
     if (balanceData && categoriesData && typesData) {
-      console.log("useEffect", categoriesData, balanceData, typesData);
       setLoadingData(false);
     } else {
       setLoadingData(true);
