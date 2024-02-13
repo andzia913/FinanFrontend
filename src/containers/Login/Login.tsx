@@ -3,7 +3,7 @@ import NavBar from "../../components/NavBar/Navbar";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import { useState } from "react";
 import serverAddress from "../../utils/server";
-import ErrorMessage from "../../components/errorMessage/ErrorMessage";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 
 const Login = () => {
   const [success, setSuccess] = useState(false);
