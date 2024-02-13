@@ -21,7 +21,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 const pages = [
   { pageName: "Start", pageLink: "/" },
   { pageName: "Cele", pageLink: "/cash-goals" },
-  { pageName: "Przepływy", pageLink: "/cash-flow" },
+  // { pageName: "Przepływy", pageLink: "/cash-flow" },
   { pageName: "Bilans", pageLink: "/financial-balance" },
   { pageName: "Struktura kosztów", pageLink: "/cost-structure" },
 ];

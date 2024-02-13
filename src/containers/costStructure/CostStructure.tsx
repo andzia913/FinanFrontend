@@ -30,7 +30,7 @@ const CostStructure = () => {
   const fetchCategoriesData = async () => {
     try {
       const res = await fetch(
-        serverAddress + `/cost-structure`,
+        serverAddress + `/costStructure`,
         fetchOptionsGETWithToken
       );
       const categoriesData = await res.json();
@@ -46,7 +46,7 @@ const CostStructure = () => {
         setAlert({ isShown: true, text: "Podana kategoria już istnieje." });
         return;
       }
-      const response = await fetch(serverAddress + `/cost-structure`, {
+      const response = await fetch(serverAddress + `/costStructure`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +81,7 @@ const CostStructure = () => {
     }
     try {
       const response = await fetch(
-        serverAddress + `/cost-structure/delete/${id}`,
+        serverAddress + `/costStructure/delete/${id}`,
         {
           method: "DELETE",
           headers: {

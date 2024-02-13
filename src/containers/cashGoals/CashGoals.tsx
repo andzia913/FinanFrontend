@@ -46,7 +46,7 @@ const CashGoals = () => {
   const fetchGoalsData = async () => {
     try {
       const res = await fetch(
-        serverAddress + `/cash-goals`,
+        serverAddress + `/cashGoals`,
         fetchOptionsGETWithToken
       );
       const goalsData = await res.json();
@@ -86,7 +86,7 @@ const CashGoals = () => {
         });
         return;
       }
-      const response = await fetch(serverAddress + "/cash-goals/add", {
+      const response = await fetch(serverAddress + "/cashGoals/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,10 +95,11 @@ const CashGoals = () => {
         body: JSON.stringify(goal),
       });
       fetchGoalsData();
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log("Dane zostały pomyślnie wysłane na serwer.", responseData);
-      } else if (response.status === 401) {
+      // if (response.ok) {
+      //   const responseData = await response.json();
+      //   console.log("Dane zostały pomyślnie wysłane na serwer.", responseData);
+      // } else
+      if (response.status === 401) {
         setAlert({
           isShown: true,
           severity: AlertSeverityOption.error,
@@ -128,11 +129,10 @@ const CashGoals = () => {
           goalData.value - goalData.currValue
         ).toFixed(2)}`,
       });
-      console.log(valueForGoal);
     }
     try {
       const response = await fetch(
-        serverAddress + "/cash-goals/add/dedicated-amount",
+        serverAddress + "/cashGoals/add/dedicated-amount",
         {
           method: "POST",
           headers: {
