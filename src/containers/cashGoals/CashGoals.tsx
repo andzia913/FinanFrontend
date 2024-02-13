@@ -1,23 +1,11 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  FormControl,
-  Grid,
-  Paper,
-  Snackbar,
-  TextField,
-  Typography,
-} from "@mui/material";
-import NavBar from "../../components/NavBar/Navbar";
-
 import { useState, useEffect } from "react";
-import LinearWithValueLabel from "../../components/ProgressBarWithLabel/ProgressBarWithLabel";
+import { Alert, Container, Snackbar, Typography } from "@mui/material";
+import NavBar from "../../components/NavBar/Navbar";
 import AddGoalForm from "../../components/AddGoalForm/AddGoalForm";
+import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
 import serverAddress from "../../utils/server";
 import { GoalEntity, GoalEntityWithSum } from "../../types/goal.entity";
-import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
+import GoalCard from "../../components/GoalCard/GoalCard";
 
 interface AlertType {
   isShown: boolean;
@@ -30,10 +18,7 @@ enum AlertSeverityOption {
 }
 
 const CashGoals = () => {
-  const [goalsData, setGoalsData] = useState<GoalEntityWithSum[] | null>();
-  const [isVisibleAddCash, setIsVisibleAddCash] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [goalsData, setGoalsData] = useState<GoalEntityWithSum[] | null>(null);
   const [valueForGoal, setValueForGoal] = useState<{ [key: string]: number }>(
     {}
   );
@@ -42,7 +27,9 @@ const CashGoals = () => {
     severity: AlertSeverityOption.error,
     text: "",
   });
-
+  const [isVisibleAddCash, setIsVisibleAddCash] = useState<{
+    [key: string]: boolean;
+  }>({});
   const fetchGoalsData = async () => {
     try {
       const res = await fetch(
@@ -189,95 +176,14 @@ const CashGoals = () => {
       <Typography variant="h4" color="primary" gutterBottom>
         Cele oszczędnościowe
       </Typography>
-      <Grid
-        container
-        spacing={{ xs: 2, md: 8 }}
-        columns={{ xs: 4, sm: 8, md: 12 }}
-      >
-        {goalsData &&
-          goalsData.map((goal) => (
-            <Grid item xs={6} key={goal.goal_name}>
-              <Paper elevation={3} style={{ padding: "16px" }}>
-                <Box key={goal.goal_name}>
-                  <Typography variant="h2" color="secondary" gutterBottom>
-                    {goal.goal_name}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    Cel: {goal.value} zł
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    Aktualnie odłożono: {goal.currValue} zł
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    Data realizacji:{" "}
-                    {goal.date instanceof Date
-                      ? goal.date.toLocaleDateString()
-                      : goal.date}
-                  </Typography>
-                  <LinearWithValueLabel
-                    value={
-                      goal.value !== 0 ? (goal.currValue / goal.value) * 100 : 0
-                    }
-                  />
-                  {goal.currValue >= goal.value ? (
-                    <Button
-                      variant="outlined"
-                      style={{ color: "lightgreen" }}
-                      disabled
-                    >
-                      Cel zrealizowany!
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      onClick={() => {
-                        setIsVisibleAddCash((prev) => ({
-                          ...prev,
-                          [goal.goal_name]: !prev[goal.goal_name],
-                        }));
-                        setValueForGoal({
-                          ...valueForGoal,
-                          [goal.goal_name]: 0,
-                        });
-                      }}
-                    >
-                      Dodaj na ten cel
-                    </Button>
-                  )}
-
-                  {isVisibleAddCash[goal.goal_name] && (
-                    <>
-                      <FormControl fullWidth margin="normal" variant="outlined">
-                        <TextField
-                          id={`value-${goal.goal_name}`}
-                          label="Wartość"
-                          type="number"
-                          value={valueForGoal[goal.goal_name]}
-                          onChange={(e) =>
-                            setValueForGoal({
-                              ...valueForGoal,
-                              [goal.goal_name]: Number(e.target.value),
-                            })
-                          }
-                        />
-                      </FormControl>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        onClick={(e) => handleAddToGoal(e, goal.goal_name)}
-                      >
-                        Dodaj
-                      </Button>
-                    </>
-                  )}
-                </Box>
-              </Paper>
-            </Grid>
-          ))}
-      </Grid>
+      <GoalCard
+        goalsData={goalsData}
+        handleAddToGoal={handleAddToGoal}
+        isVisibleAddCash={isVisibleAddCash}
+        setIsVisibleAddCash={setIsVisibleAddCash}
+        setValueForGoal={setValueForGoal}
+        valueForGoal={valueForGoal}
+      />
       <AddGoalForm onAddGoal={handleAddGoal} />
     </Container>
   );
