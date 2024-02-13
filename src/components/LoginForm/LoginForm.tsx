@@ -1,3 +1,4 @@
+import React, { useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -9,11 +10,11 @@ import {
   Typography,
 } from "@mui/material";
 import serverAddress from "../../utils/server";
-import { useState } from "react";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
   const [success, setSuccess] = useState(false);
   const [alert, setAlert] = useState({ isShown: false, text: "" });
 
@@ -26,7 +27,10 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: email, password: password }),
+        body: JSON.stringify({
+          email: emailRef.current?.value,
+          password: passwordRef.current?.value,
+        }),
       });
 
       if (response.status === 200) {
@@ -34,8 +38,6 @@ const Login = () => {
         const accessToken = responseData.accessToken;
         localStorage.setItem("accessToken", accessToken);
 
-        setEmail("");
-        setPassword("");
         setSuccess(true);
       } else if (response.status === 401 || response.status === 400) {
         setAlert({ isShown: true, text: "Błędny login lub hasło" });
@@ -55,7 +57,7 @@ const Login = () => {
   return (
     <>
       <Container maxWidth="xs">
-        {alert && (
+        {alert.isShown && (
           <Snackbar
             open={alert.isShown}
             autoHideDuration={3000}
@@ -89,22 +91,20 @@ const Login = () => {
             <Typography variant="h4">Logowanie</Typography>
             <Box component="form" onSubmit={handleSubmit}>
               <TextField
+                inputRef={emailRef}
                 id="useremail"
-                label="Useremail"
+                label="Email"
                 autoComplete="off"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
                 required
                 fullWidth
                 margin="normal"
               />
 
               <TextField
+                inputRef={passwordRef}
                 type="password"
                 id="password"
-                label="Password"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
+                label="Hasło"
                 required
                 fullWidth
                 margin="normal"
@@ -119,10 +119,9 @@ const Login = () => {
               </Button>
             </Box>
             <Typography variant="body2" margin={1}>
-              Jeżei nie masz konta, możesz się zarejestrować
-              <br />
-              <Link href="/register">Zarejstruj się</Link>
+              Jeżeli nie masz konta, możesz się zarejestrować
             </Typography>
+            <Link href="/register">Zarejstruj się</Link>
           </Box>
         )}
       </Container>
