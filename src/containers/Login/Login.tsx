@@ -2,8 +2,8 @@ import { Box, Container, Link, Typography } from "@mui/material";
 import NavBar from "../../components/NavBar/Navbar";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import { useState } from "react";
-import serverAddress from "utils/server";
-import ErrorMessage from "components/errorMessage/ErrorMessage";
+import serverAddress from "../../utils/server";
+import ErrorMessage from "../../components/errorMessage/ErrorMessage";
 
 const Login = () => {
   const [success, setSuccess] = useState(false);
