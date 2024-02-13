@@ -8,31 +8,26 @@ import {
   TextField,
   Container,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import serverAddress from "../../utils/server";
 
 type RegisterProps = {};
 
 const Register: React.FC<RegisterProps> = () => {
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [validPassword, setValidPassword] = useState<string>("");
-  const [matchPassword, setMatchPassword] = useState<string>("");
-  const [validMatch, setValidMatch] = useState<boolean>(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const passwordRepeadRef = useRef<HTMLInputElement>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [alert, setAlert] = useState({ isShown: false, text: "" });
 
-  useEffect(() => {
-    setValidPassword(password);
-    setValidMatch(password === matchPassword);
-  }, [password, matchPassword]);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!name || !email || !password) {
-      setAlert({ isShown: true, text: "Podano niewłaściwe dane" });
+    if (passwordRef.current?.value !== passwordRepeadRef.current?.value) {
+      setAlert({
+        isShown: true,
+        text: "Wprowadzone hasła różnią się od siebie",
+      });
       return;
     }
 
@@ -42,14 +37,14 @@ const Register: React.FC<RegisterProps> = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({
+          name: nameRef.current?.value,
+          email: emailRef.current?.value,
+          password: passwordRef.current?.value,
+        }),
       });
       if (response.status === 201) {
         setSuccess(true);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setMatchPassword("");
       } else if (response.status === 400) {
         setAlert({
           isShown: true,
@@ -110,59 +105,47 @@ const Register: React.FC<RegisterProps> = () => {
           <Typography variant="h4">Rejestracja</Typography>
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
+              inputRef={nameRef}
               type="text"
               label="Imię"
               id="username"
               autoComplete="off"
-              onChange={(e) => setName(e.target.value)}
-              value={name}
               required
               fullWidth
               margin="normal"
             />
 
             <TextField
+              inputRef={emailRef}
               type="email"
               label="email"
               id="email"
               autoComplete="off"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
               required
               fullWidth
               margin="normal"
             />
             <TextField
+              inputRef={passwordRef}
               type="password"
               id="password"
               label="hasło"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
               required
-              aria-invalid={validPassword ? "false" : "true"}
               fullWidth
               margin="normal"
             />
 
             <TextField
+              inputRef={passwordRepeadRef}
               type="password"
               id="confirm_pwd"
               label="Powtórz hasło"
-              onChange={(e) => setMatchPassword(e.target.value)}
-              value={matchPassword}
               required
-              aria-invalid={validMatch ? "false" : "true"}
               fullWidth
               margin="normal"
-              error={!validMatch}
             />
 
-            <Button
-              type="submit"
-              disabled={!name || !validPassword || !validMatch}
-            >
-              Zarejestruj się
-            </Button>
+            <Button type="submit">Zarejestruj się</Button>
           </Box>
           <Typography>Masz już konto?</Typography>
           <Link href="/login">Zaloguj się</Link>
