@@ -1,35 +1,28 @@
 import { useState, useEffect } from "react";
-import { Alert, Container, Snackbar, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import NavBar from "../../components/NavBar/Navbar";
 import AddGoalForm from "../../components/AddGoalForm/AddGoalForm";
 import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
 import serverAddress from "../../utils/server";
 import { GoalEntity, GoalEntityWithSum } from "../../types/goal.entity";
 import GoalCard from "../../components/GoalCard/GoalCard";
-
-interface AlertType {
-  isShown: boolean;
-  severity: AlertSeverityOption;
-  text: string;
-}
-enum AlertSeverityOption {
-  error = "error",
-  success = "success",
-}
+import AlertMessage from "../../components/AlertMessage/AlertMessage";
+import AlertMessageProps from "types/alertMessage";
 
 const CashGoals = () => {
   const [goalsData, setGoalsData] = useState<GoalEntityWithSum[] | null>(null);
   const [valueForGoal, setValueForGoal] = useState<{ [key: string]: number }>(
     {}
   );
-  const [alert, setAlert] = useState<AlertType>({
+  const [alert, setAlert] = useState<AlertMessageProps["alert"]>({
     isShown: false,
-    severity: AlertSeverityOption.error,
+    severity: "success",
     text: "",
   });
   const [isVisibleAddCash, setIsVisibleAddCash] = useState<{
     [key: string]: boolean;
   }>({});
+
   const fetchGoalsData = async () => {
     try {
       const res = await fetch(
@@ -57,7 +50,7 @@ const CashGoals = () => {
       if (goal.value <= 0) {
         setAlert({
           isShown: true,
-          severity: AlertSeverityOption.error,
+          severity: "error",
           text: "Cel nie może mieć wartości równej, bądź mniejszej od 0.",
         });
         return;
@@ -68,7 +61,7 @@ const CashGoals = () => {
       ) {
         setAlert({
           isShown: true,
-          severity: AlertSeverityOption.error,
+          severity: "error",
           text: "Istneje już cel o tej nazwie.",
         });
         return;
@@ -89,7 +82,7 @@ const CashGoals = () => {
       if (response.status === 401) {
         setAlert({
           isShown: true,
-          severity: AlertSeverityOption.error,
+          severity: "error",
           text: "Wprowadzono niepoprawne dane",
         });
         return;
@@ -111,7 +104,7 @@ const CashGoals = () => {
       correctedValue = goalData.value - goalData.currValue;
       setAlert({
         isShown: true,
-        severity: AlertSeverityOption.success,
+        severity: "error",
         text: `Podana kwota przkraczała wartość celu, dodano tylko ${(
           goalData.value - goalData.currValue
         ).toFixed(2)}`,
@@ -137,11 +130,11 @@ const CashGoals = () => {
       if (response.ok) {
         fetchGoalsData();
         setIsVisibleAddCash((prev) => ({ ...prev, [name]: false }));
-        // setAlert({
-        //   isShown: true,
-        //   severity: AlertSeverityOption.success,
-        //   text: `Kwota dodana pomyślnie na cel: ${name}`,
-        // });
+        setAlert({
+          isShown: true,
+          severity: "success",
+          text: `Kwota dodana pomyślnie na cel: ${name}`,
+        });
         setValueForGoal({
           ...valueForGoal,
           [name]: 0,
@@ -157,22 +150,7 @@ const CashGoals = () => {
   return (
     <Container disableGutters={true}>
       <NavBar />
-      {alert && (
-        <Snackbar
-          open={alert.isShown}
-          autoHideDuration={3000}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          onClose={() =>
-            setAlert({
-              isShown: false,
-              text: "",
-              severity: AlertSeverityOption.error,
-            })
-          }
-        >
-          <Alert severity={alert.severity}>{alert.text}</Alert>
-        </Snackbar>
-      )}
+      <AlertMessage alert={alert} setAlert={setAlert} />
       <Typography variant="h4" color="primary" gutterBottom>
         Cele oszczędnościowe
       </Typography>

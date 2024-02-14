@@ -10,6 +10,7 @@ const AlertMessage = ({ alert, setAlert }: AlertMessageProps) => (
       setAlert({
         isShown: false,
         text: "",
+        severity: "success",
       })
     }
   >
