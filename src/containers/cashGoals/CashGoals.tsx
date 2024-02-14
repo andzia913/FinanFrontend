@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Typography } from "@mui/material";
 import NavBar from "../../components/NavBar/Navbar";
 import AddGoalForm from "../../components/AddGoalForm/AddGoalForm";
@@ -26,7 +26,7 @@ const CashGoals = () => {
   const fetchGoalsData = async () => {
     try {
       const res = await fetch(
-        serverAddress + `/cashGoals`,
+        `${serverAddress}/cashGoals`,
         fetchOptionsGETWithToken
       );
       const goalsData = await res.json();
@@ -41,6 +41,7 @@ const CashGoals = () => {
       console.error("Błąd podczas pobierania danych celów:", error);
     }
   };
+
   useEffect(() => {
     fetchGoalsData();
   }, []);
@@ -62,23 +63,19 @@ const CashGoals = () => {
         setAlert({
           isShown: true,
           severity: "error",
-          text: "Istneje już cel o tej nazwie.",
+          text: "Istnieje już cel o tej nazwie.",
         });
         return;
       }
-      const response = await fetch(serverAddress + "/cashGoals/add", {
+      const response = await fetch(`${serverAddress}/cashGoals/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify(goal),
       });
       fetchGoalsData();
-      // if (response.ok) {
-      //   const responseData = await response.json();
-      //   console.log("Dane zostały pomyślnie wysłane na serwer.", responseData);
-      // } else
       if (response.status === 401) {
         setAlert({
           isShown: true,
@@ -105,19 +102,19 @@ const CashGoals = () => {
       setAlert({
         isShown: true,
         severity: "error",
-        text: `Podana kwota przkraczała wartość celu, dodano tylko ${(
+        text: `Podana kwota przekracza wartość celu, dodano tylko ${(
           goalData.value - goalData.currValue
         ).toFixed(2)}`,
       });
     }
     try {
       const response = await fetch(
-        serverAddress + "/cashGoals/add/dedicated-amount",
+        `${serverAddress}/cashGoals/add/dedicated-amount`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
           body: JSON.stringify({
             goal_name: name,
@@ -125,8 +122,6 @@ const CashGoals = () => {
           }),
         }
       );
-      console.log(valueForGoal);
-
       if (response.ok) {
         fetchGoalsData();
         setIsVisibleAddCash((prev) => ({ ...prev, [name]: false }));
@@ -148,7 +143,7 @@ const CashGoals = () => {
   };
 
   return (
-    <Container disableGutters={true}>
+    <Container disableGutters>
       <NavBar />
       <AlertMessage alert={alert} setAlert={setAlert} />
       <Typography variant="h4" color="primary" gutterBottom>
