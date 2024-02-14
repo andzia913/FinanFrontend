@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography } from "@mui/material";
+import { Button, Container, Grid, Typography } from "@mui/material";
 import NavBar from "../../components/NavBar/Navbar";
 import AddGoalForm from "../../components/AddGoalForm/AddGoalForm";
 import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
@@ -7,21 +7,23 @@ import serverAddress from "../../utils/server";
 import { GoalEntity, GoalEntityWithSum } from "../../types/goal.entity";
 import GoalCard from "../../components/GoalCard/GoalCard";
 import AlertMessage from "../../components/AlertMessage/AlertMessage";
-import AlertMessageProps from "types/alertMessage";
+import AlertMessageProps from "../../types/alertMessage";
+import GoalDetails from "../../components/GoalDetails/GoalDetails";
+
+//TODO: Move API calls to separate file
 
 const CashGoals = () => {
   const [goalsData, setGoalsData] = useState<GoalEntityWithSum[] | null>(null);
-  const [valueForGoal, setValueForGoal] = useState<{ [key: string]: number }>(
-    {}
-  );
+  const [oneGoalDetails, setOneGoalDetails] =
+    useState<GoalEntityWithSum | null>(null);
   const [alert, setAlert] = useState<AlertMessageProps["alert"]>({
     isShown: false,
     severity: "success",
     text: "",
   });
-  const [isVisibleAddCash, setIsVisibleAddCash] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [view, setView] = useState<"goals" | "goalDetails" | "addGoalForm">(
+    "goals"
+  );
 
   const fetchGoalsData = async () => {
     try {
@@ -42,6 +44,14 @@ const CashGoals = () => {
     }
   };
 
+  const handleOpenGoalsDetails = (
+    e: React.FormEvent,
+    goal: GoalEntityWithSum
+  ) => {
+    e.preventDefault();
+    setView("goalDetails");
+    setOneGoalDetails(goal);
+  };
   useEffect(() => {
     fetchGoalsData();
   }, []);
@@ -89,15 +99,15 @@ const CashGoals = () => {
     }
   };
 
-  const handleAddToGoal = async (e: React.FormEvent, name: string) => {
+  const handleAddToGoal = async (
+    e: React.FormEvent,
+    name: string,
+    value: number
+  ) => {
     e.preventDefault();
-    setIsVisibleAddCash((prev) => ({ ...prev, [name]: true }));
     const goalData = goalsData?.find((goal) => goal.goal_name === name);
     let correctedValue;
-    if (
-      goalData &&
-      goalData?.currValue + valueForGoal[name] > goalData?.value
-    ) {
+    if (goalData && goalData?.currValue + value > goalData?.value) {
       correctedValue = goalData.value - goalData.currValue;
       setAlert({
         isShown: true,
@@ -118,21 +128,17 @@ const CashGoals = () => {
           },
           body: JSON.stringify({
             goal_name: name,
-            value: correctedValue ? correctedValue : valueForGoal[name],
+            value: correctedValue ? correctedValue : value,
           }),
         }
       );
       if (response.ok) {
         fetchGoalsData();
-        setIsVisibleAddCash((prev) => ({ ...prev, [name]: false }));
+        setView("goals");
         setAlert({
           isShown: true,
           text: `Kwota dodana pomyślnie na cel: ${name}`,
           severity: "success",
-        });
-        setValueForGoal({
-          ...valueForGoal,
-          [name]: 0,
         });
       } else {
         console.error("Błąd podczas wysyłania danych na serwer.");
@@ -149,15 +155,27 @@ const CashGoals = () => {
       <Typography variant="h4" color="primary" gutterBottom>
         Cele oszczędnościowe
       </Typography>
-      <GoalCard
-        goalsData={goalsData}
-        handleAddToGoal={handleAddToGoal}
-        isVisibleAddCash={isVisibleAddCash}
-        setIsVisibleAddCash={setIsVisibleAddCash}
-        setValueForGoal={setValueForGoal}
-        valueForGoal={valueForGoal}
-      />
-      <AddGoalForm onAddGoal={handleAddGoal} />
+      {view === "goalDetails" && oneGoalDetails && (
+        <GoalDetails goal={oneGoalDetails} handleAddToGoal={handleAddToGoal} />
+      )}
+      {view === "goals" && goalsData && (
+        <Grid
+          container
+          spacing={{ xs: 2, md: 8 }}
+          columns={{ xs: 4, sm: 8, md: 12 }}
+        >
+          {goalsData.map((goal) => (
+            <GoalCard
+              goal={goal}
+              key={goal.goal_name}
+              handleOpenGoalsDetails={handleOpenGoalsDetails}
+            />
+          ))}
+          <Button onClick={() => setView("addGoalForm")}>Add new goal</Button>
+        </Grid>
+      )}
+
+      {view === "addGoalForm" && <AddGoalForm onAddGoal={handleAddGoal} />}
     </Container>
   );
 };
