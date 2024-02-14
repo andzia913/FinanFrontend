@@ -7,8 +7,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import LinearWithValueLabel from "../../components/ProgressBarWithLabel/ProgressBarWithLabel";
 import { GoalEntityWithSum } from "../../types/goal.entity";
+import LinearProgressWithLabel from "../../components/ProgressBarWithLabel/ProgressBarWithLabel";
 
 type GoalCardProps = {
   goalsData: GoalEntityWithSum[] | null;
@@ -52,7 +52,7 @@ const GoalCard = ({
                     ? goal.date.toLocaleDateString()
                     : goal.date}
                 </Typography>
-                <LinearWithValueLabel
+                <LinearProgressWithLabel
                   value={
                     goal.value !== 0 ? (goal.currValue / goal.value) * 100 : 0
                   }

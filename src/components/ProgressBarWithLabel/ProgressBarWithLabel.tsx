@@ -3,13 +3,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
-interface LinearProgressWithLabelProps {
-  value: number;
-}
-
-const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
-  value,
-}) => {
+const LinearProgressWithLabel: React.FC<{ value: number }> = ({ value }) => {
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box sx={{ width: "100%", mr: 1 }}>
@@ -28,18 +22,4 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
   );
 };
 
-interface LinearWithValueLabelProps {
-  value: number;
-}
-
-const LinearWithValueLabel: React.FC<LinearWithValueLabelProps> = ({
-  value,
-}) => {
-  return (
-    <Box sx={{ width: "100%" }}>
-      <LinearProgressWithLabel value={value} />
-    </Box>
-  );
-};
-
-export default LinearWithValueLabel;
+export default LinearProgressWithLabel;
