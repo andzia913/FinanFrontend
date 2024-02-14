@@ -1,7 +1,6 @@
 import * as React from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
 import { GoalEntity } from "../../types/goal.entity";
 import { Typography } from "@mui/material";
@@ -11,18 +10,29 @@ interface AddGoalFormProps {
 }
 
 const AddGoalForm: React.FC<AddGoalFormProps> = ({ onAddGoal }) => {
-  const [goalName, setGoalName] = React.useState("");
-  const [value, setValue] = React.useState(0);
-  const [date, setDate] = React.useState("");
+  const goalNameRef = React.useRef<HTMLInputElement>(null);
+  const valueRef = React.useRef<HTMLInputElement>(null);
+  const dateRef = React.useRef<HTMLInputElement>(null);
 
-  const handleAddGoal = (event: React.FormEvent) => {
+  const handleAddGoal = (
+    event: React.FormEvent,
+    goalNameRef: React.RefObject<HTMLInputElement>,
+    valueRef: React.RefObject<HTMLInputElement>,
+    dateRef: React.RefObject<HTMLInputElement>
+  ) => {
     event.preventDefault();
-    const formattedDate = new Date(date);
-    onAddGoal({ goal_name: goalName, value: value, date: formattedDate });
-
-    setGoalName("");
-    setValue(0);
-    setDate("");
+    if (
+      goalNameRef.current?.value &&
+      valueRef.current?.value &&
+      dateRef.current?.value
+    ) {
+      const formattedDate = new Date(dateRef.current?.value);
+      onAddGoal({
+        goal_name: goalNameRef.current.value,
+        value: Number(valueRef.current.value),
+        date: formattedDate,
+      });
+    }
   };
 
   return (
@@ -30,43 +40,41 @@ const AddGoalForm: React.FC<AddGoalFormProps> = ({ onAddGoal }) => {
       <Typography variant="h6" gutterBottom color="primary">
         Tutaj możesz zdefiniować nowy cel oszczędnościowy
       </Typography>
-      <FormControl fullWidth margin="normal" variant="outlined">
+      <Box
+        component="form"
+        onSubmit={(e) => handleAddGoal(e, goalNameRef, valueRef, dateRef)}
+      >
         <TextField
+          inputRef={goalNameRef}
           id="goal-name"
           label="Nazwa celu"
-          value={goalName}
-          onChange={(e) => setGoalName(e.target.value)}
+          required
+          fullWidth
         />
-      </FormControl>
-      <FormControl fullWidth margin="normal" variant="outlined">
         <TextField
+          inputRef={valueRef}
           id="value"
           label="Wartość"
           type="number"
-          value={value}
-          onChange={(e) => setValue(Number(e.target.value))}
+          required
+          fullWidth
         />
-      </FormControl>
-      <FormControl fullWidth margin="normal" variant="outlined">
         <TextField
+          inputRef={dateRef}
           id="end-date"
           label="Data realizacji"
           type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
+          required
+          fullWidth
           InputLabelProps={{
             shrink: true,
           }}
         />
-      </FormControl>
-      <Button
-        variant="contained"
-        color="primary"
-        type="submit"
-        onClick={(e) => handleAddGoal(e)}
-      >
-        Dodaj
-      </Button>
+
+        <Button variant="contained" color="primary" type="submit">
+          Dodaj
+        </Button>
+      </Box>
     </Box>
   );
 };
