@@ -14,7 +14,7 @@ const AlertMessage = ({ alert, setAlert }: AlertMessageProps) => (
       })
     }
   >
-    <Alert severity="error">{alert.text}</Alert>
+    <Alert severity={alert.severity}>{alert.text}</Alert>
   </Snackbar>
 );
 

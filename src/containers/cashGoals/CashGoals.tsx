@@ -132,8 +132,8 @@ const CashGoals = () => {
         setIsVisibleAddCash((prev) => ({ ...prev, [name]: false }));
         setAlert({
           isShown: true,
-          severity: "success",
           text: `Kwota dodana pomyślnie na cel: ${name}`,
+          severity: "success",
         });
         setValueForGoal({
           ...valueForGoal,
