@@ -1,11 +1,7 @@
 import { Snackbar, Alert } from "@mui/material";
+import AlertMessageProps from "../../types/alertMessage";
 
-interface ErrorMessageProps {
-  alert: { isShown: boolean; text: string };
-  setAlert: Function;
-}
-
-const ErrorMessage = ({ alert, setAlert }: ErrorMessageProps) => (
+const AlertMessage = ({ alert, setAlert }: AlertMessageProps) => (
   <Snackbar
     open={alert.isShown}
     autoHideDuration={3000}
@@ -21,4 +17,4 @@ const ErrorMessage = ({ alert, setAlert }: ErrorMessageProps) => (
   </Snackbar>
 );
 
-export default ErrorMessage;
+export default AlertMessage;

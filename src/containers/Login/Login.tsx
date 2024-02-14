@@ -3,11 +3,16 @@ import NavBar from "../../components/NavBar/Navbar";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import { useState } from "react";
 import serverAddress from "../../utils/server";
-import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
+import ErrorMessage from "../../components/AlertMessage/AlertMessage";
+import AlertMessage from "../../types/alertMessage";
 
 const Login = () => {
   const [success, setSuccess] = useState(false);
-  const [alert, setAlert] = useState({ isShown: false, text: "" });
+  const [alert, setAlert] = useState<AlertMessage["alert"]>({
+    isShown: false,
+    text: "",
+    severity: "success",
+  });
 
   const handleSubmit = async (
     e: React.FormEvent,
@@ -35,15 +40,24 @@ const Login = () => {
 
         setSuccess(true);
       } else if (response.status === 401 || response.status === 400) {
-        setAlert({ isShown: true, text: "Błędny login lub hasło" });
+        setAlert({
+          isShown: true,
+          text: "Błędny login lub hasło",
+          severity: "success",
+        });
       }
     } catch (err) {
       if (!err) {
-        setAlert({ isShown: true, text: "Brak odpowiedzi servera" });
+        setAlert({
+          isShown: true,
+          text: "Brak odpowiedzi servera",
+          severity: "success",
+        });
       } else {
         setAlert({
           isShown: true,
           text: "Logowanie nie powiodło się. Spróbuj ponownie później.",
+          severity: "success",
         });
       }
     }

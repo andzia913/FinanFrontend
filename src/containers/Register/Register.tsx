@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { Box, Container, Link, Typography } from "@mui/material";
 import NavBar from "../../components/NavBar/Navbar";
 import RegisterForm from "../../components/RegisterForm/RegisterForm";
-import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
+import AlertMessage from "../../components/AlertMessage/AlertMessage";
 import serverAddress from "../../utils/server";
+import AlertMessageProps from "types/alertMessage";
 
 const Register = () => {
   const [success, setSuccess] = useState<boolean>(false);
-  const [alert, setAlert] = useState({ isShown: false, text: "" });
+  const [alert, setAlert] = useState<AlertMessageProps["alert"]>({
+    isShown: false,
+    text: "",
+    severity: "success",
+  });
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -21,6 +26,7 @@ const Register = () => {
       setAlert({
         isShown: true,
         text: "Wprowadzone hasła różnią się od siebie",
+        severity: "error",
       });
       return;
     }
@@ -42,20 +48,27 @@ const Register = () => {
         setAlert({
           isShown: true,
           text: "Podano błędne dane. Spróbuj ponownie",
+          severity: "error",
         });
       } else if (response.status === 409) {
         setAlert({
           isShown: true,
           text: "Istnieje już uzytkownik przypisany do tego adresu email",
+          severity: "error",
         });
       }
     } catch (err) {
       if (!err) {
-        setAlert({ isShown: true, text: "Brak odpowiedzi serwera" });
+        setAlert({
+          isShown: true,
+          text: "Brak odpowiedzi serwera",
+          severity: "error",
+        });
       } else {
         setAlert({
           isShown: true,
           text: "Rejestracja nie powiodło się. Spróbuj ponownie później.",
+          severity: "error",
         });
       }
     }
@@ -63,7 +76,7 @@ const Register = () => {
   return (
     <Container disableGutters={true}>
       <NavBar />
-      {alert.isShown && <ErrorMessage alert={alert} setAlert={setAlert} />}
+      {alert.isShown && <AlertMessage alert={alert} setAlert={setAlert} />}
       {success ? (
         <Box mt={4}>
           <Typography variant="h4">Użytkownik zarejestrowany</Typography>
