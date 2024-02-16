@@ -9,6 +9,8 @@ import GoalCard from "../../components/GoalCard/GoalCard";
 import AlertMessage from "../../components/AlertMessage/AlertMessage";
 import AlertMessageProps from "../../types/alertMessage";
 import GoalDetails from "../../components/GoalDetails/GoalDetails";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import Stack from "@mui/material/Stack";
 
 //TODO: Move API calls to separate file
 
@@ -152,6 +154,18 @@ const CashGoals = () => {
     <Container disableGutters>
       <NavBar />
       <AlertMessage alert={alert} setAlert={setAlert} />
+      {view !== "goals" && (
+        <Stack direction="row" alignItems={"flex-start"}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setView("goals")}
+          >
+            <KeyboardArrowLeftIcon />
+            Wróć
+          </Button>
+        </Stack>
+      )}
       <Typography variant="h4" color="primary" gutterBottom>
         Cele oszczędnościowe
       </Typography>
