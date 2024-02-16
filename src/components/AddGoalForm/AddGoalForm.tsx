@@ -48,6 +48,7 @@ const AddGoalForm: React.FC<AddGoalFormProps> = ({ onAddGoal }) => {
           inputRef={goalNameRef}
           id="goal-name"
           label="Nazwa celu"
+          margin="normal"
           required
           fullWidth
         />
@@ -56,6 +57,7 @@ const AddGoalForm: React.FC<AddGoalFormProps> = ({ onAddGoal }) => {
           id="value"
           label="Wartość"
           type="number"
+          margin="normal"
           required
           fullWidth
         />
@@ -64,6 +66,7 @@ const AddGoalForm: React.FC<AddGoalFormProps> = ({ onAddGoal }) => {
           id="end-date"
           label="Data realizacji"
           type="date"
+          margin="normal"
           required
           fullWidth
           InputLabelProps={{
