@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Button, Container, Grid, Typography } from "@mui/material";
+import { Button, Container, Typography, Stack } from "@mui/material";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import NavBar from "../../components/NavBar/Navbar";
 import AddGoalForm from "../../components/AddGoalForm/AddGoalForm";
 import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
 import serverAddress from "../../utils/server";
-import { GoalEntity, GoalEntityWithSum } from "../../types/goal.entity";
-import GoalCard from "../../components/GoalCards/GoalCards";
 import AlertMessage from "../../components/AlertMessage/AlertMessage";
-import AlertMessageProps from "../../types/alertMessage";
 import GoalDetails from "../../components/GoalDetails/GoalDetails";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import Stack from "@mui/material/Stack";
+import { GoalEntity, GoalEntityWithSum } from "../../types/goal.entity";
+import AlertMessageProps from "../../types/alertMessage";
 import GoalCards from "../../components/GoalCards/GoalCards";
 import AddIcon from "@mui/icons-material/Add";
 
