@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 
 const LinearProgressWithLabel: React.FC<{ value: number }> = ({ value }) => {
   return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
+    <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
       <Box sx={{ width: "100%", mr: 1 }}>
         <LinearProgress
           style={{ height: "15px" }}
