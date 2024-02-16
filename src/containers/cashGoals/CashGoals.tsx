@@ -5,12 +5,14 @@ import AddGoalForm from "../../components/AddGoalForm/AddGoalForm";
 import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
 import serverAddress from "../../utils/server";
 import { GoalEntity, GoalEntityWithSum } from "../../types/goal.entity";
-import GoalCard from "../../components/GoalCard/GoalCard";
+import GoalCard from "../../components/GoalCards/GoalCards";
 import AlertMessage from "../../components/AlertMessage/AlertMessage";
 import AlertMessageProps from "../../types/alertMessage";
 import GoalDetails from "../../components/GoalDetails/GoalDetails";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import Stack from "@mui/material/Stack";
+import GoalCards from "../../components/GoalCards/GoalCards";
+import AddIcon from "@mui/icons-material/Add";
 
 //TODO: Move API calls to separate file
 
@@ -167,8 +169,8 @@ const CashGoals = () => {
             variant="outlined"
             color="primary"
             onClick={() => setView("goals")}
+            startIcon={<KeyboardArrowLeftIcon />}
           >
-            <KeyboardArrowLeftIcon />
             Wróć
           </Button>
         </Stack>
@@ -176,27 +178,25 @@ const CashGoals = () => {
       <Typography variant="h4" color="primary" gutterBottom>
         Cele oszczędnościowe
       </Typography>
+      {view === "goals" && goalsData && (
+        <>
+          <Button
+            color="success"
+            onClick={() => setView("addGoalForm")}
+            startIcon={<AddIcon />}
+          >
+            Dodaj nowy cel
+          </Button>
+          <GoalCards
+            goalsData={goalsData}
+            handleOpenGoalsDetails={handleOpenGoalsDetails}
+          />
+        </>
+      )}
+      {view === "addGoalForm" && <AddGoalForm onAddGoal={handleAddGoal} />}
       {view === "goalDetails" && oneGoalDetails && (
         <GoalDetails goal={oneGoalDetails} handleAddToGoal={handleAddToGoal} />
       )}
-      {view === "goals" && goalsData && (
-        <Grid
-          container
-          spacing={{ xs: 2, md: 8 }}
-          columns={{ xs: 4, sm: 8, md: 12 }}
-        >
-          {goalsData.map((goal) => (
-            <GoalCard
-              goal={goal}
-              key={goal.goal_name}
-              handleOpenGoalsDetails={handleOpenGoalsDetails}
-            />
-          ))}
-          <Button onClick={() => setView("addGoalForm")}>Add new goal</Button>
-        </Grid>
-      )}
-
-      {view === "addGoalForm" && <AddGoalForm onAddGoal={handleAddGoal} />}
     </Container>
   );
 };

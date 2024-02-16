@@ -8,7 +8,7 @@ import { Typography } from "@mui/material";
 interface AddGoalFormProps {
   onAddGoal: (goal: GoalEntity) => void;
 }
-
+// TODO: Add validation for date , cannot be past
 const AddGoalForm: React.FC<AddGoalFormProps> = ({ onAddGoal }) => {
   const goalNameRef = React.useRef<HTMLInputElement>(null);
   const valueRef = React.useRef<HTMLInputElement>(null);
