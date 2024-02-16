@@ -88,7 +88,14 @@ const CashGoals = () => {
         body: JSON.stringify(goal),
       });
       fetchGoalsData();
-      if (response.status === 401) {
+      if (response.ok) {
+        setAlert({
+          isShown: true,
+          severity: "success",
+          text: "Dodano nowy cel o nazwie : " + goal.goal_name,
+        });
+        setView("goals");
+      } else if (response.status === 401) {
         setAlert({
           isShown: true,
           severity: "error",
