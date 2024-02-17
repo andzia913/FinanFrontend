@@ -99,7 +99,7 @@ const GoalDetails = ({
                     id={`value-${goal.goal_name}`}
                     label="Wartość"
                     type="number"
-                    inputProps={{ min: "1" }}
+                    inputProps={{ min: "1", max: goal.value - goal.currValue }}
                   />
                   <Button variant="contained" color="primary" type="submit">
                     Dodaj

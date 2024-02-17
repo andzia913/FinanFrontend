@@ -58,6 +58,7 @@ const AddGoalForm: React.FC<AddGoalFormProps> = ({ onAddGoal }) => {
           label="Wartość"
           type="number"
           margin="normal"
+          inputProps={{ min: "0" }}
           required
           fullWidth
         />

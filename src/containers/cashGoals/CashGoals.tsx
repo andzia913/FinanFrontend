@@ -60,14 +60,7 @@ const CashGoals = () => {
 
   const handleAddGoal = async (goal: GoalEntity) => {
     try {
-      if (goal.value <= 0) {
-        setAlert({
-          isShown: true,
-          severity: "error",
-          text: "Cel nie może mieć wartości równej, bądź mniejszej od 0.",
-        });
-        return;
-      } else if (
+      if (
         goalsData?.find(
           (goalFromData) => goalFromData.goal_name === goal.goal_name
         )
@@ -114,18 +107,7 @@ const CashGoals = () => {
     value: number
   ) => {
     e.preventDefault();
-    const goalData = goalsData?.find((goal) => goal.goal_name === name);
-    let correctedValue;
-    if (goalData && goalData?.currValue + value > goalData?.value) {
-      correctedValue = goalData.value - goalData.currValue;
-      setAlert({
-        isShown: true,
-        severity: "error",
-        text: `Podana kwota przekracza wartość celu, dodano tylko ${(
-          goalData.value - goalData.currValue
-        ).toFixed(2)}`,
-      });
-    }
+    // TODO: Add id
     try {
       const response = await fetch(
         `${serverAddress}/cashGoals/add/dedicated-amount`,
@@ -137,7 +119,7 @@ const CashGoals = () => {
           },
           body: JSON.stringify({
             goal_name: name,
-            value: correctedValue ? correctedValue : value,
+            value: value,
           }),
         }
       );
