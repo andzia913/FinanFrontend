@@ -16,16 +16,18 @@ import { GoalEntityWithSum } from "../../types/goal.entity";
 import { CategoriesTotal } from "types/category.entity";
 import LinearWithValueLabel from "../../components/ProgressBarWithLabel/ProgressBarWithLabel";
 import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
+import { useBalanceData } from "../../hooks/useBalanceData";
 
 const HomePage = () => {
   const [goalsData, setGoalsData] = useState<GoalEntityWithSum[] | null>();
   const [categoriesData, setCategoriesData] = useState<CategoriesTotal[]>();
-  const [balanceTotal, setBalanceTotal] = useState(0);
-  const [balanceCosts, setBalanceCosts] = useState(0);
-  const [balanceIncome, setBalanceIncome] = useState(0);
   const [lastUpdateDate, setLastUpdateDate] = useState("");
   const [loading, setLoading] = useState(true);
+  const { balanceTotal, balanceCostSum, balanceIncomeSum } = useBalanceData();
 
+  useEffect(() => {
+    setLoading(false);
+  }, [balanceTotal]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,30 +43,6 @@ const HomePage = () => {
         );
         const categoriesData = await categoriesRes.json();
 
-        const balanceRes = await fetch(
-          serverAddress + "/financialBalance",
-          fetchOptionsGETWithToken
-        );
-        const balanceData = await balanceRes.json();
-        if (balanceData.balanceIncomeSum) {
-          const total =
-            balanceData.balanceIncomeSum - balanceData.balanceCostSum;
-          const costs = balanceData.balanceCostSum;
-          const income = balanceData.balanceIncomeSum;
-          const lastUpdate = balanceData.financialBalance.length
-            ? new Date(
-                balanceData.financialBalance[0].date
-              ).toLocaleDateString()
-            : "";
-          setBalanceTotal(Number(total.toFixed(2)));
-          setBalanceCosts(costs);
-          setBalanceIncome(income);
-          setLastUpdateDate(lastUpdate);
-        } else {
-          setBalanceTotal(0);
-          setBalanceCosts(0);
-          setBalanceIncome(0);
-        }
         setGoalsData(goalsData);
         setCategoriesData(categoriesData);
         setLoading(false);
@@ -146,8 +124,8 @@ const HomePage = () => {
         {!loading ? (
           <>
             {renderBalanceData(
-              balanceCosts,
-              balanceIncome,
+              balanceCostSum,
+              balanceIncomeSum,
               balanceTotal,
               "/financial-balance"
             )}
@@ -165,8 +143,8 @@ const HomePage = () => {
                       .map((category) =>
                         renderStructureTile(
                           category.category,
-                          balanceCosts !== 0
-                            ? (category.total / balanceCosts) * 100
+                          balanceCostSum !== 0
+                            ? (category.total / balanceCostSum) * 100
                             : 0
                         )
                       )}

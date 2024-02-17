@@ -20,37 +20,20 @@ import NavBar from "../../components/NavBar/Navbar.tsx";
 import serverAddress from "../../utils/server.ts";
 import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken.tsx";
 
+import { useBalanceData } from "../../hooks/useBalanceData.tsx";
+
 const FinancialBalance = () => {
-  const [balanceData, setBalanceData] = useState<BalanceEntity[]>();
   const [categoriesData, setCategoriesData] = useState<CategoryEntity[]>();
   const [typesData, setTypesData] = useState<TypeEntity[]>();
   const [recordToEdit, setRecordToEdit] = useState<BalanceEntity | null>(null);
   const [isVisilbeFormAdd, setIsVisibleFormAdd] = useState(false);
   const [isVisilbeFormEdit, setIsVisibleFormEdit] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
-  const balanceDataRef = useRef<BalanceEntity[] | null>(null);
   const categoriesDataRef = useRef<CategoryEntity[] | null>(null);
   const typesDataRef = useRef<TypeEntity[] | null>(null);
-  const [balanceTotal, setBalanceTotal] = useState(0);
   const [alert, setAlert] = useState({ isShown: false, text: "" });
 
-  const fetchBalanceData = async () => {
-    const res = await fetch(
-      serverAddress + "/financialBalance",
-      fetchOptionsGETWithToken
-    );
-    const balanceData = await res.json();
-
-    if (balanceData.balanceCostSum) {
-      const total = balanceData.balanceIncomeSum - balanceData.balanceCostSum;
-      setBalanceTotal(total);
-    } else {
-      setBalanceTotal(0);
-    }
-
-    balanceDataRef.current = balanceData.financialBalance;
-    setBalanceData(balanceData.financialBalance);
-  };
+  const { balanceData, balanceTotal } = useBalanceData();
 
   const handleEditClick = (id: string) => {
     const fetchRecordData = async () => {
@@ -89,7 +72,6 @@ const FinancialBalance = () => {
           return;
         }
         setRecordToEdit(null);
-        fetchBalanceData();
         // if (response.ok) {
         //   const responseData = await response.json();
         //   console.log("Dane zostały pomyślnie zaktualizoane.", responseData);
@@ -110,7 +92,6 @@ const FinancialBalance = () => {
           },
           body: JSON.stringify(formData),
         });
-        fetchBalanceData();
         if (response.ok) {
           const responseData = await response.json();
           console.log(
@@ -126,6 +107,11 @@ const FinancialBalance = () => {
     }
   };
 
+  const handleDeleteClick = (id: string) => {
+    //TDOD: Add confirmation dialog
+    //TODO: Add some logic, elier was refreshing with fechting all data again, now its not possible when data are fetched from useBalanceData hook.
+  };
+
   useEffect(() => {
     if (balanceData && categoriesData && typesData) {
       setLoadingData(false);
@@ -133,9 +119,6 @@ const FinancialBalance = () => {
       setLoadingData(true);
     }
   }, [balanceData, categoriesData, typesData]);
-  useEffect(() => {
-    fetchBalanceData();
-  }, [balanceDataRef]);
 
   useEffect(() => {
     const fetchCategoriesData = async () => {
@@ -244,7 +227,7 @@ const FinancialBalance = () => {
               columns={tableColumns}
               data={balanceData!}
               handleEditClick={handleEditClick}
-              handleDeleteClick={fetchBalanceData}
+              handleDeleteClick={handleDeleteClick}
             />
           </>
         )}
