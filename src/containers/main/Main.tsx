@@ -11,48 +11,38 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import NavBar from "../../components/NavBar/Navbar";
-import serverAddress from "../../utils/server";
 import { GoalEntityWithSum } from "../../types/goal.entity";
 import { CategoriesTotal } from "types/category.entity";
 import LinearWithValueLabel from "../../components/ProgressBarWithLabel/ProgressBarWithLabel";
-import fetchOptionsGETWithToken from "../../utils/fetchOptionsGETWithToken";
 import { useBalanceData } from "../../hooks/useBalanceData";
+import { useCategoriesData } from "../../hooks/useCategoriesData";
+import { useGoalsData } from "../../hooks/useGoalsData";
 
 const HomePage = () => {
-  const [goalsData, setGoalsData] = useState<GoalEntityWithSum[] | null>();
-  const [categoriesData, setCategoriesData] = useState<CategoriesTotal[]>();
   const [lastUpdateDate, setLastUpdateDate] = useState("");
   const [loading, setLoading] = useState(true);
   const { balanceTotal, balanceCostSum, balanceIncomeSum } = useBalanceData();
+  const categoriesData = useCategoriesData() as CategoriesTotal[] | undefined;
+  const goalsData = useGoalsData() as GoalEntityWithSum[] | undefined;
 
+  //TODO: What can i do with this ugly useEffect?
   useEffect(() => {
-    setLoading(false);
-  }, [balanceTotal]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const goalsRes = await fetch(
-          serverAddress + `/cashGoals`,
-          fetchOptionsGETWithToken
-        );
-        const goalsData = await goalsRes.json();
-
-        const categoriesRes = await fetch(
-          serverAddress + `/costStructure`,
-          fetchOptionsGETWithToken
-        );
-        const categoriesData = await categoriesRes.json();
-
-        setGoalsData(goalsData);
-        setCategoriesData(categoriesData);
-        setLoading(false);
-      } catch (error) {
-        console.error("Błąd podczas pobierania danych:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+    if (
+      categoriesData !== (null && undefined) &&
+      goalsData !== (null && undefined) &&
+      balanceTotal !== (null && undefined) &&
+      balanceCostSum !== (null && undefined) &&
+      balanceIncomeSum !== (null && undefined)
+    ) {
+      setLoading(false);
+    }
+  }, [
+    categoriesData,
+    goalsData,
+    balanceTotal,
+    balanceCostSum,
+    balanceIncomeSum,
+  ]);
 
   const renderBalanceData = (
     balanceCosts: number,

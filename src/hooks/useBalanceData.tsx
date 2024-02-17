@@ -22,8 +22,12 @@ export const useBalanceData = () => {
       } else {
         setBalanceTotal(0);
       }
-      setBalanceCostSum(balanceData.balanceCostSum);
-      setBalanceIncomeSum(balanceData.balanceIncomeSum);
+      setBalanceCostSum(
+        balanceData.balanceCostSum ? balanceData.balanceCostSum : 0
+      );
+      setBalanceIncomeSum(
+        balanceData.balanceIncomeSum ? balanceData.balanceIncomeSum : 0
+      );
       setBalanceData(balanceData.financialBalance);
     };
 
