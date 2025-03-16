@@ -20,4 +20,4 @@ export interface FormData extends BalanceEntity {
     value: number;
     category: CategoryEntity;
     comment: string; 
-  };
+  }
