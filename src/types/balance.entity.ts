@@ -1,21 +1,23 @@
+import {TypeEntity} from "./type.entity.ts";
+import {CategoryEntity} from "./category.entity.ts";
+
 export interface BalanceEntity{
-    id?: string;
-    user_email?: string;
-    type_name: string | null;
-    id_type: string,
+    id?: number;
+    name?: string;
+    userId?: number;
+    type: TypeEntity,
     date: Date;
     value: number;
-    category_name: string | null;
-    id_category: string;
+    category: CategoryEntity;
     comment: string;
     planned?: number;
 }
 
 export interface FormData extends BalanceEntity {
-    id?: string;
-    id_type: string;
+    id?: number;
+    type: TypeEntity;
     date: Date;
     value: number;
-    id_category: string;
+    category: CategoryEntity;
     comment: string; 
   };

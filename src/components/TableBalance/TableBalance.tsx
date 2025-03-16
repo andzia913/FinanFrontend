@@ -20,7 +20,7 @@ const TableBalance = ({
   columns,
   data,
   handleEditClick,
-  handleDeleteClick,
+  handleDeleteClick
 }: {
   columns: TableColumn[];
   data: BalanceEntity[];
@@ -29,11 +29,11 @@ const TableBalance = ({
 }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
-      columns: columns as Column[],
+      columns: columns as Column<BalanceEntity>[],
       data,
     });
 
-  const onDeleteClick = async (id: string) => {
+  const onDeleteClick = async (id?: number) => {
     try {
       const response = await fetch(
         serverAddress + `/financialBalance/delete/${id}`,
@@ -46,7 +46,7 @@ const TableBalance = ({
         }
       );
       if (response.ok) {
-        const responseData = response;
+        //const responseData = response;
         handleDeleteClick();
       } else {
         console.error("Błąd podczas wysyłania danych na serwer. DELETE");
@@ -75,13 +75,21 @@ const TableBalance = ({
             prepareRow(row);
             return (
               <TableRow {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <TableCell {...cell.getCellProps()}>
-                      {cell.render("Cell")}
-                    </TableCell>
-                  );
-                })}
+                 <TableCell>
+                   {row.original.type.name}
+                 </TableCell>
+                <TableCell>
+                  {row.original.date ? new Date(row.original.date).toISOString() : "Brak daty"}
+                </TableCell>
+                <TableCell>
+                  {row.original.value}
+                </TableCell>
+                <TableCell>
+                  {row.original.category.name}
+                </TableCell>
+                <TableCell>
+                  {row.original.comment}
+                </TableCell>
                 <TableCell>
                   <Tooltip title="Edytuj">
                     <IconButton

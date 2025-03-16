@@ -29,13 +29,16 @@ const FormBalaceRecord = ({
   handleSubmit: Function;
 }) => {
   const initialFormData: FormData = {
-    id: "",
-    id_type: types[0].id_type,
-    type_name: types[0]?.type_name,
+    type: {
+      id: types[0].id,
+      name: types[0].name
+    },
     date: new Date(),
     value: 0,
-    id_category: categories[0].id_category,
-    category_name: categories[0].category_name,
+    category: {
+      id: categories[0].id,
+      name: categories[0].name
+    },
     comment: "",
   };
 
@@ -47,12 +50,16 @@ const FormBalaceRecord = ({
       setIsEditMode(true);
       setFormData({
         id: recordToEdit.id,
-        id_type: recordToEdit.id_type,
-        type_name: recordToEdit.type_name,
+        type: {
+          id:recordToEdit.type.id,
+          name:recordToEdit.type.name
+        },
         date: recordToEdit.date,
         value: recordToEdit.value,
-        id_category: recordToEdit.id_category,
-        category_name: recordToEdit.category_name,
+        category: {
+          id: recordToEdit.category.id,
+          name: recordToEdit.category.name
+        },
         comment: recordToEdit.comment,
       });
     } else {
@@ -83,23 +90,22 @@ const FormBalaceRecord = ({
                 id="type"
                 name="type"
                 required={true}
-                value={formData.id_type}
+                value={formData.type.id +""}
                 onChange={(e: SelectChangeEvent<string>) => {
                   const selectedTypeId = e.target.value;
                   const selectedType = types.find(
-                    (type) => type.id_type === selectedTypeId
-                  );
+                   (type) => type.id === Number(selectedTypeId)
+                 );
 
                   setFormData({
                     ...formData,
-                    id_type: selectedTypeId,
-                    type_name: selectedType?.type_name || "",
+                    type: {id: Number(selectedTypeId), name: selectedType?.name || "" }
                   });
                 }}
               >
                 {types.map((type) => (
-                  <MenuItem key={type.id_type} value={type.id_type}>
-                    {type.type_name}
+                  <MenuItem key={type.id} value={type.id}>
+                    {type.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -151,25 +157,24 @@ const FormBalaceRecord = ({
                 id="category"
                 name="category"
                 required={true}
-                value={formData.id_category}
+                value={formData.category.name }
                 onChange={(e: SelectChangeEvent<string>) => {
                   const selectedCategoryId = e.target.value;
                   const selectedCategory = categories.find(
-                    (category) => category.id_category === selectedCategoryId
+                    (category) => category.id === Number(selectedCategoryId)
                   );
                   setFormData({
                     ...formData,
-                    id_category: e.target.value,
-                    category_name: selectedCategory?.category_name || "",
+                    category: {id: Number(e.target.value), name: selectedCategory?.name || "" }
                   });
                 }}
               >
                 {categories.map((category) => (
                   <MenuItem
-                    key={category.id_category}
-                    value={category.id_category}
+                    key={category.id}
+                    value={category.id}
                   >
-                    {category.category_name}
+                    {category.name}
                   </MenuItem>
                 ))}
               </Select>

@@ -107,7 +107,7 @@ const FinancialBalance = () => {
     }
   };
 
-  const handleDeleteClick = (id: string) => {
+  const handleDeleteClick = () => {
     //TDOD: Add confirmation dialog
     //TODO: Add some logic, elier was refreshing with fechting all data again, now its not possible when data are fetched from useBalanceData hook.
   };
@@ -184,7 +184,7 @@ const FinancialBalance = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => setIsVisibleFormAdd(isVisilbeFormAdd ? false : true)}
+          onClick={() => setIsVisibleFormAdd(!isVisilbeFormAdd)}
           disabled={categoriesData?.length === 0}
           style={{ margin: "10px" }}
         >
