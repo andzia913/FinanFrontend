@@ -19,7 +19,7 @@ import { useCategoriesData } from "../../hooks/useCategoriesData";
 import { useGoalsData } from "../../hooks/useGoalsData";
 
 const HomePage = () => {
-  const [lastUpdateDate, setLastUpdateDate] = useState("");
+  //const [lastUpdateDate, setLastUpdateDate] = useState("");
   const [loading, setLoading] = useState(true);
   const { balanceTotal, balanceCostSum, balanceIncomeSum } = useBalanceData();
   const categoriesData = useCategoriesData() as CategoriesTotal[] | undefined;
@@ -128,13 +128,13 @@ const HomePage = () => {
                 <Grid container>
                   {categoriesData &&
                     categoriesData
-                      .sort((a, b) => b.total - a.total)
+                      .sort((a, b) => b.value - a.value)
                       .slice(0, 3)
                       .map((category) =>
                         renderStructureTile(
-                          category.category,
+                          category.categoryName,
                           balanceCostSum !== 0
-                            ? (category.total / balanceCostSum) * 100
+                            ? (category.value / balanceCostSum) * 100
                             : 0
                         )
                       )}

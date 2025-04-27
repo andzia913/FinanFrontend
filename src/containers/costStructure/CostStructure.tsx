@@ -33,7 +33,7 @@ const CostStructure = () => {
         serverAddress + `/costStructure`,
         fetchOptionsGETWithToken
       );
-      const categoriesData = await res.json();
+      const categoriesData :CategoriesTotal[] = await res.json();
       setCategoriesData(categoriesData);
     } catch (error) {
       console.error("Błąd podczas pobierania danych kategorii:", error);
@@ -42,7 +42,7 @@ const CostStructure = () => {
 
   const handleSubmit = async () => {
     try {
-      if (categoriesData?.find((item) => item.category === categoryName)) {
+      if (categoriesData?.find((item) => item.categoryName === categoryName)) {
         setAlert({ isShown: true, text: "Podana kategoria już istnieje." });
         return;
       }
@@ -55,7 +55,7 @@ const CostStructure = () => {
         body: JSON.stringify({ category_name: categoryName }),
       });
       if (response.ok) {
-        fetchCategoriesData();
+        await fetchCategoriesData();
         setIsVisibleFormAdd(false);
         setCategoryName("");
       } else if (response.status === 401) {
@@ -91,7 +91,7 @@ const CostStructure = () => {
         }
       );
       if (response.ok) {
-        fetchCategoriesData();
+        await fetchCategoriesData();
       }
       if (response.status === 404) {
         setAlert({
@@ -111,13 +111,13 @@ const CostStructure = () => {
   const arrForChart =
     categoriesData?.map((category, index) => ({
       id: index,
-      value: category.total,
+      value: category.value,
       label:
-        category.category.length > 25
-          ? category.category.slice(0, 22) + "..."
-          : category.category,
+        category.categoryName?.length > 25
+          ? category.categoryName.slice(0, 22) + "..."
+          : category.categoryName,
     })) || undefined;
-
+  console.log(categoriesData);
   return (
     <Container disableGutters={true}>
       <NavBar />
@@ -139,7 +139,7 @@ const CostStructure = () => {
               divider
               secondaryAction={
                 <IconButton
-                  onClick={() => onDeleteClick(category.id, category.total)}
+                  onClick={() => onDeleteClick(category.id, category.value)}
                   edge="end"
                   aria-label="delete"
                 >
@@ -147,9 +147,9 @@ const CostStructure = () => {
                 </IconButton>
               }
             >
-              <ListItemText primary={category.category} />
+              <ListItemText primary={category.categoryName} />
               <Box style={{ marginRight: "10%" }}>
-                {category.total.toFixed(2)} zł
+                {category.value?.toFixed(2)} zł
               </Box>
             </ListItem>
           ))}

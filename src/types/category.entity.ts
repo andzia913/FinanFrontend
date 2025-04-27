@@ -6,8 +6,8 @@ export interface CategoryEntity {
 
 export interface CategoriesTotal {
   id: string;
-  category: string;
-  total: number;
+  categoryName: string;
+  value: number;
 }
 
 export interface PieChartData {
